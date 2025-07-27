@@ -1,63 +1,151 @@
 import mongoose, { Schema, Document } from 'mongoose';
 
 export interface IProduct extends Document {
+  productId: string;
   name: string;
   description: string;
-  price: number;
-  images: string[];
-  category: string;
+  costPrice: number;
+  discount: number;
+  sellingPrice: number;
+  categories: string[];
   stock: number;
+  tags: string[];
+  images: string[];
   sku: string;
   isActive: boolean;
+  isTrending: boolean;
+  weight?: number;
+  dimensions?: {
+    length: number;
+    width: number;
+    height: number;
+  };
+  brand?: string;
+  material?: string;
+  warranty?: string;
   createdAt: Date;
   updatedAt: Date;
 }
 
 const ProductSchema: Schema = new Schema({
+  productId: {
+    type: String,
+    required: [true, 'Please provide a product ID'],
+    unique: true,
+    trim: true,
+  },
   name: {
     type: String,
     required: [true, 'Please provide a product name'],
     maxlength: [100, 'Product name cannot be more than 100 characters'],
+    trim: true,
   },
   description: {
     type: String,
     required: [true, 'Please provide a product description'],
     maxlength: [1000, 'Description cannot be more than 1000 characters'],
   },
-  price: {
+  costPrice: {
     type: Number,
-    required: [true, 'Please provide a price'],
-    min: [0, 'Price cannot be negative'],
+    required: [true, 'Please provide a cost price'],
+    min: [0, 'Cost price cannot be negative'],
   },
-  images: [{
+  discount: {
+    type: Number,
+    required: [true, 'Please provide a discount amount'],
+    min: [0, 'Discount cannot be negative'],
+    default: 0,
+  },
+  sellingPrice: {
+    type: Number,
+    required: [true, 'Please provide a selling price'],
+    min: [0, 'Selling price cannot be negative'],
+  },
+  categories: [{
     type: String,
-    required: [true, 'Please provide at least one image'],
+    required: [true, 'Please provide at least one category'],
+    enum: ['cutleries', 'chinaware', 'glassware', 'kitchen utensils', 'others'],
   }],
-  category: {
-    type: String,
-    required: [true, 'Please provide a category'],
-    enum: ['electronics', 'clothing', 'books', 'home', 'sports', 'other'],
-  },
   stock: {
     type: Number,
     required: [true, 'Please provide stock quantity'],
     min: [0, 'Stock cannot be negative'],
     default: 0,
   },
-  sku: {
+  tags: [{
     type: String,
-    required: [true, 'Please provide a SKU'],
-    unique: true,
-  },
+    trim: true,
+  }],
+  images: [{
+    type: String,
+    required: [true, 'Please provide at least one image'],
+  }],
+  
   isActive: {
     type: Boolean,
     default: true,
+  },
+  weight: {
+    type: Number,
+    min: [0, 'Weight cannot be negative'],
+  },
+  dimensions: {
+    length: {
+      type: Number,
+      min: [0, 'Length cannot be negative'],
+    },
+    width: {
+      type: Number,
+      min: [0, 'Width cannot be negative'],
+    },
+    height: {
+      type: Number,
+      min: [0, 'Height cannot be negative'],
+    },
+  },
+  brand: {
+    type: String,
+    trim: true,
+  },
+  material: {
+    type: String,
+    trim: true,
+  },
+  warranty: {
+    type: String,
+    trim: true,
   },
 }, {
   timestamps: true,
 });
 
-// Create index for better search performance
-ProductSchema.index({ name: 'text', description: 'text' });
+// Pre-save middleware to calculate selling price
+ProductSchema.pre('save', function(next) {
+  const doc = this as any;
+  if (doc.isModified('costPrice') || doc.isModified('discount')) {
+    doc.sellingPrice = doc.costPrice - doc.discount;
+  }
+  next();
+});
+
+// Create indexes for better search performance
+ProductSchema.index({ name: 'text', description: 'text', tags: 'text' });
+ProductSchema.index({ productId: 1 });
+ProductSchema.index({ categories: 1 });
+ProductSchema.index({ isTrending: 1 });
+ProductSchema.index({ isActive: 1 });
+
+// Virtual for discount percentage
+ProductSchema.virtual('discountPercentage').get(function() {
+  const doc = this as any;
+  if (doc.costPrice > 0) {
+    return Math.round((doc.discount / doc.costPrice) * 100);
+  }
+  return 0;
+});
+
+// Ensure virtual fields are serialized
+ProductSchema.set('toJSON', { virtuals: true });
+ProductSchema.set('toObject', { virtuals: true });
 
 export default mongoose.models.Product || mongoose.model<IProduct>('Product', ProductSchema); 
