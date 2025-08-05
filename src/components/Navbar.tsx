@@ -49,12 +49,20 @@ export default function Navbar() {
                 </button>
               </>
             ) : (
-              <Link
-                href="/auth/signin"
-                className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
-              >
-                Sign In
-              </Link>
+              <>
+                <Link
+                  href="/auth/signin"
+                  className="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
+                >
+                  Sign In
+                </Link>
+                <Link
+                  href="/auth/signup"
+                  className="bg-blue-600 text-white hover:bg-blue-700 px-3 py-2 rounded-md text-sm font-medium"
+                >
+                  Sign Up
+                </Link>
+              </>
             )}
 
             <Link
@@ -115,13 +123,22 @@ export default function Navbar() {
                 </button>
               </>
             ) : (
-              <Link
-                href="/auth/signin"
-                className="text-gray-700 hover:text-gray-900 block px-3 py-2 rounded-md text-base font-medium"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Sign In
-              </Link>
+              <>
+                <Link
+                  href="/auth/signin"
+                  className="text-gray-700 hover:text-gray-900 block px-3 py-2 rounded-md text-base font-medium"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Sign In
+                </Link>
+                <Link
+                  href="/auth/signup"
+                  className="bg-blue-600 text-white hover:bg-blue-700 block px-3 py-2 rounded-md text-base font-medium"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Sign Up
+                </Link>
+              </>
             )}
 
             <Link
