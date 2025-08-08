@@ -1,18 +1,39 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useSession, signOut } from 'next-auth/react';
 import { useCartStore } from '@/store/cart';
-import { ShoppingCart, User, Search } from 'lucide-react';
+import { ShoppingCart, User, Search, Settings, LogOut, Heart, Package, Shield } from 'lucide-react';
 
 export default function Navbar() {
   const { data: session } = useSession();
   const { getItemCount } = useCartStore();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
+  const profileDropdownRef = useRef<HTMLDivElement>(null);
 
   const itemCount = getItemCount();
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (profileDropdownRef.current && !profileDropdownRef.current.contains(event.target as Node)) {
+        setIsProfileDropdownOpen(false);
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  const handleSignOut = () => {
+    signOut({ callbackUrl: '/' });
+    setIsProfileDropdownOpen(false);
+  };
 
   return (
     <nav className="bg-white shadow-lg font-outfit sticky top-0 z-50">
@@ -58,7 +79,7 @@ export default function Navbar() {
 
           {/* Right Section - Profile and Cart */}
           <div className="flex items-center space-x-4">
-          <Link
+            <Link
               href="/cart"
               className="text-gray-700 hover:text-gray-900 p-2 rounded-md text-5 font-medium flex items-center relative"
             >
@@ -71,12 +92,84 @@ export default function Navbar() {
             </Link>
             
             {session ? (
-              <Link
-                href="/account"
-                className="text-gray-700 hover:text-gray-900 p-2 rounded-md text-5 font-medium flex items-center"
-              >
-                <User className="w-5 h-5" />
-              </Link>
+              <div className="relative" ref={profileDropdownRef}>
+                <button
+                  onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
+                  className="text-gray-700 hover:text-gray-900 p-2 rounded-md text-5 font-medium flex items-center"
+                >
+                  <User className="w-5 h-5" />
+                </button>
+
+                {/* Profile Dropdown */}
+                {isProfileDropdownOpen && (
+                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 border border-gray-200">
+                    {/* User Info */}
+                    <div className="px-4 py-2 border-b border-gray-100">
+                      <p className="text-sm font-medium text-gray-900">{session.user?.name}</p>
+                      <p className="text-xs text-gray-500">{session.user?.email}</p>
+                    </div>
+
+                    {/* Profile Options */}
+                    <Link
+                      href="/profile"
+                      className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      onClick={() => setIsProfileDropdownOpen(false)}
+                    >
+                      <User className="w-4 h-4 mr-3" />
+                      Profile
+                    </Link>
+
+                    <Link
+                      href="/orders"
+                      className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      onClick={() => setIsProfileDropdownOpen(false)}
+                    >
+                      <Package className="w-4 h-4 mr-3" />
+                      Your Orders
+                    </Link>
+
+                    <Link
+                      href="/favorites"
+                      className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      onClick={() => setIsProfileDropdownOpen(false)}
+                    >
+                      <Heart className="w-4 h-4 mr-3" />
+                      Favorites
+                    </Link>
+
+                    {/* Admin Dashboard - Only show for admin users */}
+                    {session.user?.role === 'admin' && (
+                      <Link
+                        href="/admin"
+                        className="flex items-center px-4 py-2 text-sm text-blue-600 hover:bg-blue-50 border-t border-gray-100"
+                        onClick={() => setIsProfileDropdownOpen(false)}
+                      >
+                        <Shield className="w-4 h-4 mr-3" />
+                        Admin Dashboard
+                      </Link>
+                    )}
+
+                    {/* Settings */}
+                    <Link
+                      href="/settings"
+                      className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      onClick={() => setIsProfileDropdownOpen(false)}
+                    >
+                      <Settings className="w-4 h-4 mr-3" />
+                      Settings
+                    </Link>
+
+                    {/* Logout */}
+                    <button
+                      onClick={handleSignOut}
+                      className="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50 border-t border-gray-100"
+                    >
+                      <LogOut className="w-4 h-4 mr-3" />
+                      Logout
+                    </button>
+                  </div>
+                )}
+              </div>
             ) : (
               <Link
                 href="/auth/signin"
@@ -140,20 +233,52 @@ export default function Navbar() {
             {session ? (
               <>
                 <Link
-                  href="/account"
+                  href="/profile"
                   className="text-gray-700 hover:text-gray-900 block px-3 py-2 rounded-md text-base font-medium flex items-center"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   <User className="w-4 h-4 mr-2" />
-                  Account
+                  Profile
+                </Link>
+                <Link
+                  href="/orders"
+                  className="text-gray-700 hover:text-gray-900 block px-3 py-2 rounded-md text-base font-medium flex items-center"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  <Package className="w-4 h-4 mr-2" />
+                  Your Orders
+                </Link>
+                <Link
+                  href="/favorites"
+                  className="text-gray-700 hover:text-gray-900 block px-3 py-2 rounded-md text-base font-medium flex items-center"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  <Heart className="w-4 h-4 mr-2" />
+                  Favorites
+                </Link>
+                {session.user?.role === 'admin' && (
+                  <Link
+                    href="/admin"
+                    className="text-blue-600 hover:text-blue-700 block px-3 py-2 rounded-md text-base font-medium flex items-center"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    <Shield className="w-4 h-4 mr-2" />
+                    Admin Dashboard
+                  </Link>
+                )}
+                <Link
+                  href="/settings"
+                  className="text-gray-700 hover:text-gray-900 block px-3 py-2 rounded-md text-base font-medium flex items-center"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  <Settings className="w-4 h-4 mr-2" />
+                  Settings
                 </Link>
                 <button
-                  onClick={() => {
-                    signOut();
-                    setIsMenuOpen(false);
-                  }}
-                  className="text-gray-700 hover:text-gray-900 block px-3 py-2 rounded-md text-base font-medium w-full text-left"
+                  onClick={handleSignOut}
+                  className="text-red-600 hover:text-red-700 block px-3 py-2 rounded-md text-base font-medium w-full text-left flex items-center"
                 >
+                  <LogOut className="w-4 h-4 mr-2" />
                   Sign Out
                 </button>
               </>

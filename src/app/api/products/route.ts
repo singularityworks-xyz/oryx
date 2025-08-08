@@ -20,6 +20,7 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const category = searchParams.get('category');
     const search = searchParams.get('search');
+    const tags = searchParams.get('tags');
     const page = parseInt(searchParams.get('page') || '1');
     const limit = parseInt(searchParams.get('limit') || '12');
     const skip = (page - 1) * limit;
@@ -27,11 +28,16 @@ export async function GET(request: NextRequest) {
     let query: any = { isActive: true };
 
     if (category) {
-      query.category = category;
+      query.categories = category;
     }
 
     if (search) {
       query.$text = { $search: search };
+    }
+
+    if (tags) {
+      const tagArray = tags.split(',').map(tag => tag.trim());
+      query.tags = { $in: tagArray };
     }
 
     const products = await Product.find(query)
@@ -69,10 +75,29 @@ export async function POST(request: NextRequest) {
     await dbConnect();
 
     const body = await request.json();
-    const { name, description, price, images, category, stock, sku } = body;
+    const {
+      productId,
+      name,
+      description,
+      costPrice,
+      discount,
+      sellingPrice,
+      categories,
+      stock,
+      tags,
+      images,
+      sku,
+      isActive,
+      isTrending,
+      weight,
+      dimensions,
+      brand,
+      material,
+      warranty
+    } = body;
 
     // Validate required fields
-    if (!name || !description || !price || !images || !category || !stock || !sku) {
+    if (!productId || !name || !description || !costPrice || !categories || !stock || !sku || !images) {
       return NextResponse.json(
         { error: 'Missing required fields' },
         { status: 400 }
@@ -88,14 +113,34 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Check if productId already exists
+    const existingProductId = await Product.findOne({ productId });
+    if (existingProductId) {
+      return NextResponse.json(
+        { error: 'Product ID already exists' },
+        { status: 400 }
+      );
+    }
+
     const product = new Product({
+      productId,
       name,
       description,
-      price,
-      images,
-      category,
+      costPrice,
+      discount: discount || 0,
+      sellingPrice: sellingPrice || (costPrice - (discount || 0)),
+      categories,
       stock,
+      tags: tags || [],
+      images,
       sku,
+      isActive: isActive !== undefined ? isActive : true,
+      isTrending: isTrending || false,
+      weight,
+      dimensions,
+      brand,
+      material,
+      warranty
     });
 
     await product.save();

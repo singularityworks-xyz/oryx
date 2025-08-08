@@ -1,150 +1,335 @@
 const mongoose = require('mongoose');
 require('dotenv').config({ path: '.env.local' });
 
-// Define the Product schema directly in the seed script
+// Define the Product schema to match the current model
 const ProductSchema = new mongoose.Schema({
+  productId: {
+    type: String,
+    required: [true, 'Please provide a product ID'],
+    unique: true,
+    trim: true,
+  },
   name: {
     type: String,
     required: [true, 'Please provide a product name'],
     maxlength: [100, 'Product name cannot be more than 100 characters'],
+    trim: true,
   },
   description: {
     type: String,
     required: [true, 'Please provide a product description'],
     maxlength: [1000, 'Description cannot be more than 1000 characters'],
   },
-  price: {
+  costPrice: {
     type: Number,
-    required: [true, 'Please provide a price'],
-    min: [0, 'Price cannot be negative'],
+    required: [true, 'Please provide a cost price'],
+    min: [0, 'Cost price cannot be negative'],
   },
-  images: [{
+  discount: {
+    type: Number,
+    required: [true, 'Please provide a discount amount'],
+    min: [0, 'Discount cannot be negative'],
+    default: 0,
+  },
+  sellingPrice: {
+    type: Number,
+    required: [true, 'Please provide a selling price'],
+    min: [0, 'Selling price cannot be negative'],
+  },
+  categories: [{
     type: String,
-    required: [true, 'Please provide at least one image'],
+    required: [true, 'Please provide at least one category'],
+    enum: ['cutleries', 'chinaware', 'glassware', 'kitchen utensils', 'others'],
   }],
-  category: {
-    type: String,
-    required: [true, 'Please provide a category'],
-    enum: ['electronics', 'clothing', 'books', 'home', 'sports', 'other'],
-  },
   stock: {
     type: Number,
     required: [true, 'Please provide stock quantity'],
     min: [0, 'Stock cannot be negative'],
     default: 0,
   },
+  tags: [{
+    type: String,
+    trim: true,
+  }],
+  images: [{
+    type: String,
+    required: [true, 'Please provide at least one image'],
+  }],
   sku: {
     type: String,
     required: [true, 'Please provide a SKU'],
     unique: true,
+    trim: true,
   },
   isActive: {
     type: Boolean,
     default: true,
   },
+  isTrending: {
+    type: Boolean,
+    default: false,
+  },
+  weight: {
+    type: Number,
+    min: [0, 'Weight cannot be negative'],
+  },
+  dimensions: {
+    length: {
+      type: Number,
+      min: [0, 'Length cannot be negative'],
+    },
+    width: {
+      type: Number,
+      min: [0, 'Width cannot be negative'],
+    },
+    height: {
+      type: Number,
+      min: [0, 'Height cannot be negative'],
+    },
+  },
+  brand: {
+    type: String,
+    trim: true,
+  },
+  material: {
+    type: String,
+    trim: true,
+  },
+  warranty: {
+    type: String,
+    trim: true,
+  },
 }, {
   timestamps: true,
+});
+
+// Pre-save middleware to calculate selling price
+ProductSchema.pre('save', function(next) {
+  if (this.isModified('costPrice') || this.isModified('discount')) {
+    this.sellingPrice = this.costPrice - this.discount;
+  }
+  next();
 });
 
 // Create the Product model
 const Product = mongoose.models.Product || mongoose.model('Product', ProductSchema);
 
-const sampleProducts = [
+const homepageProducts = [
   {
-    name: "Wireless Bluetooth Headphones",
-    description: "High-quality wireless headphones with noise cancellation and 30-hour battery life. Perfect for music lovers and professionals.",
-    price: 129.99,
+    productId: "HP-001",
+    name: "Elegant White Dinner Plate Set",
+    description: "Sophisticated white dinner plates crafted from premium porcelain. Perfect for formal dining and everyday elegance. Set of 6 plates with a timeless design that complements any table setting.",
+    costPrice: 89.99,
+    discount: 15.00,
+    sellingPrice: 74.99,
+    categories: ["chinaware"],
+    stock: 45,
+    tags: ["homepage", "featured", "dinnerware"],
     images: [
-      "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500",
-      "https://images.unsplash.com/photo-1484704849700-f032a568e944?w=500"
+      "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=500",
+      "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=500"
     ],
-    category: "electronics",
-    stock: 50,
-    sku: "WH-001"
+    sku: "WHITE-PLATE-001",
+    isActive: true,
+    isTrending: true,
+    weight: 0.8,
+    dimensions: {
+      length: 28,
+      width: 28,
+      height: 2
+    },
+    brand: "Oryx",
+    material: "Porcelain",
+    warranty: "2 years"
   },
   {
-    name: "Premium Cotton T-Shirt",
-    description: "Comfortable and stylish cotton t-shirt made from 100% organic cotton. Available in multiple colors and sizes.",
-    price: 24.99,
+    productId: "HP-002",
+    name: "Premium Stainless Steel Cutlery Set",
+    description: "Luxurious 18/10 stainless steel cutlery set with ergonomic handles. Includes dinner forks, knives, spoons, and dessert utensils. Dishwasher safe with lifetime warranty.",
+    costPrice: 129.99,
+    discount: 25.00,
+    sellingPrice: 104.99,
+    categories: ["cutleries"],
+    stock: 32,
+    tags: ["homepage", "premium", "cutlery"],
     images: [
-      "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=500",
-      "https://images.unsplash.com/photo-1503341504253-dff4815485f1?w=500"
+      "https://images.unsplash.com/photo-1582735689369-4fe89db7114c?w=500",
+      "https://images.unsplash.com/photo-1582735689369-4fe89db7114c?w=500"
     ],
-    category: "clothing",
-    stock: 100,
-    sku: "TS-001"
+    sku: "CUTLERY-001",
+    isActive: true,
+    isTrending: false,
+    weight: 1.2,
+    dimensions: {
+      length: 20,
+      width: 15,
+      height: 3
+    },
+    brand: "Oryx",
+    material: "18/10 Stainless Steel",
+    warranty: "Lifetime"
   },
   {
-    name: "The Art of Programming",
-    description: "A comprehensive guide to modern programming practices, algorithms, and software development methodologies.",
-    price: 49.99,
+    productId: "HP-003",
+    name: "Crystal Wine Glass Collection",
+    description: "Handcrafted crystal wine glasses with elegant stem design. Perfect for red and white wines. Set of 4 glasses with superior clarity and resonance.",
+    costPrice: 79.99,
+    discount: 10.00,
+    sellingPrice: 69.99,
+    categories: ["glassware"],
+    stock: 28,
+    tags: ["homepage", "crystal", "wine"],
     images: [
-      "https://images.unsplash.com/photo-1532012197267-da84d127e765?w=500",
-      "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=500"
+      "https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=500",
+      "https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=500"
     ],
-    category: "books",
-    stock: 25,
-    sku: "BK-001"
+    sku: "WINE-GLASS-001",
+    isActive: true,
+    isTrending: true,
+    weight: 0.6,
+    dimensions: {
+      length: 8,
+      width: 8,
+      height: 25
+    },
+    brand: "Oryx",
+    material: "Crystal",
+    warranty: "1 year"
   },
   {
-    name: "Smart Home Assistant",
-    description: "Voice-controlled smart home assistant with AI capabilities. Control your home devices with simple voice commands.",
-    price: 199.99,
+    productId: "HP-004",
+    name: "Professional Chef's Knife",
+    description: "8-inch professional chef's knife with high-carbon steel blade and ergonomic handle. Perfect for precision cutting, chopping, and slicing. Includes protective sheath.",
+    costPrice: 149.99,
+    discount: 30.00,
+    sellingPrice: 119.99,
+    categories: ["kitchen utensils"],
+    stock: 18,
+    tags: ["homepage", "professional", "chef"],
     images: [
-      "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=500",
-      "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=500"
+      "https://images.unsplash.com/photo-1582735689369-4fe89db7114c?w=500",
+      "https://images.unsplash.com/photo-1582735689369-4fe89db7114c?w=500"
     ],
-    category: "electronics",
-    stock: 30,
-    sku: "SHA-001"
+    sku: "CHEF-KNIFE-001",
+    isActive: true,
+    isTrending: false,
+    weight: 0.4,
+    dimensions: {
+      length: 25,
+      width: 4,
+      height: 2
+    },
+    brand: "Oryx",
+    material: "High-Carbon Steel",
+    warranty: "5 years"
   },
   {
-    name: "Yoga Mat Premium",
-    description: "Non-slip yoga mat made from eco-friendly materials. Perfect for yoga, pilates, and fitness activities.",
-    price: 39.99,
+    productId: "HP-005",
+    name: "Artisan Wooden Serving Bowl",
+    description: "Handcrafted wooden serving bowl made from sustainable acacia wood. Perfect for salads, pasta, or decorative purposes. Natural finish with food-safe coating.",
+    costPrice: 59.99,
+    discount: 5.00,
+    sellingPrice: 54.99,
+    categories: ["others"],
+    stock: 22,
+    tags: ["homepage", "artisan", "wooden"],
     images: [
-      "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=500",
-      "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=500"
-    ],
-    category: "sports",
-    stock: 75,
-    sku: "YM-001"
-  },
-  {
-    name: "Ceramic Coffee Mug Set",
-    description: "Beautiful handcrafted ceramic coffee mugs. Set of 4, perfect for your morning coffee or tea.",
-    price: 34.99,
-    images: [
-      "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?w=500",
+      "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=500",
       "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=500"
     ],
-    category: "home",
-    stock: 60,
-    sku: "CM-001"
+    sku: "WOODEN-BOWL-001",
+    isActive: true,
+    isTrending: true,
+    weight: 0.8,
+    dimensions: {
+      length: 20,
+      width: 20,
+      height: 8
+    },
+    brand: "Oryx",
+    material: "Acacia Wood",
+    warranty: "1 year"
   },
   {
-    name: "Running Shoes Pro",
-    description: "Professional running shoes with advanced cushioning technology. Designed for maximum comfort and performance.",
-    price: 89.99,
+    productId: "HP-006",
+    name: "Copper Cookware Set",
+    description: "Premium copper cookware set with stainless steel lining. Includes 3 pots and 2 pans with ergonomic handles. Excellent heat distribution and conductivity.",
+    costPrice: 299.99,
+    discount: 50.00,
+    sellingPrice: 249.99,
+    categories: ["kitchen utensils"],
+    stock: 12,
+    tags: ["homepage", "copper", "cookware"],
     images: [
-      "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500",
-      "https://images.unsplash.com/photo-1608231387042-66d1773070a5?w=500"
+      "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=500",
+      "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=500"
     ],
-    category: "sports",
-    stock: 40,
-    sku: "RS-001"
+    sku: "COPPER-COOK-001",
+    isActive: true,
+    isTrending: false,
+    weight: 3.5,
+    dimensions: {
+      length: 35,
+      width: 25,
+      height: 15
+    },
+    brand: "Oryx",
+    material: "Copper with Stainless Steel",
+    warranty: "10 years"
   },
   {
-    name: "Wireless Charging Pad",
-    description: "Fast wireless charging pad compatible with all Qi-enabled devices. Sleek design with LED indicator.",
-    price: 29.99,
+    productId: "HP-007",
+    name: "Ceramic Coffee Mug Collection",
+    description: "Handcrafted ceramic coffee mugs with modern design. Set of 4 mugs with comfortable handles and microwave-safe construction. Perfect for coffee, tea, or hot beverages.",
+    costPrice: 44.99,
+    discount: 8.00,
+    sellingPrice: 36.99,
+    categories: ["chinaware"],
+    stock: 55,
+    tags: ["homepage", "ceramic", "coffee"],
     images: [
-      "https://images.unsplash.com/photo-1586953208448-b95a79798f07?w=500",
-      "https://images.unsplash.com/photo-1586953208448-b95a79798f07?w=500"
+      "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?w=500",
+      "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?w=500"
     ],
-    category: "electronics",
-    stock: 80,
-    sku: "WC-001"
+    sku: "COFFEE-MUG-001",
+    isActive: true,
+    isTrending: true,
+    weight: 0.3,
+    dimensions: {
+      length: 10,
+      width: 10,
+      height: 12
+    },
+    brand: "Oryx",
+    material: "Ceramic",
+    warranty: "1 year"
+  },
+  {
+    productId: "HP-008",
+    name: "Stainless Steel Mixing Bowls",
+    description: "Professional-grade stainless steel mixing bowls set. Includes 3 sizes (small, medium, large) with non-slip bases. Perfect for baking, cooking, and food preparation.",
+    costPrice: 69.99,
+    discount: 12.00,
+    sellingPrice: 57.99,
+    categories: ["kitchen utensils"],
+    stock: 38,
+    tags: ["homepage", "stainless", "mixing"],
+    images: [
+      "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=500",
+      "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=500"
+    ],
+    sku: "MIXING-BOWL-001",
+    isActive: true,
+    isTrending: false,
+    weight: 1.8,
+    dimensions: {
+      length: 25,
+      width: 25,
+      height: 12
+    },
+    brand: "Oryx",
+    material: "Stainless Steel",
+    warranty: "3 years"
   }
 ];
 
@@ -167,17 +352,22 @@ async function seedDatabase() {
     await Product.deleteMany({});
     console.log('Cleared existing products');
 
-    // Insert sample products
-    const insertedProducts = await Product.insertMany(sampleProducts);
-    console.log(`Successfully inserted ${insertedProducts.length} products`);
+    // Insert homepage products
+    const insertedProducts = await Product.insertMany(homepageProducts);
+    console.log(`Successfully inserted ${insertedProducts.length} homepage products`);
 
     // Display inserted products
-    console.log('\nInserted products:');
+    console.log('\nInserted homepage products:');
     insertedProducts.forEach(product => {
-      console.log(`- ${product.name} (${product.sku}) - $${product.price}`);
+      console.log(`- ${product.name} (${product.sku}) - $${product.sellingPrice} (Original: $${product.costPrice})`);
+      console.log(`  Categories: ${product.categories.join(', ')}`);
+      console.log(`  Tags: ${product.tags.join(', ')}`);
+      console.log(`  Stock: ${product.stock}`);
+      console.log('');
     });
 
-    console.log('\nDatabase seeding completed successfully!');
+    console.log('Database seeding completed successfully!');
+    console.log('\nYou can now test the homepage SHOP section with these products.');
   } catch (error) {
     console.error('Error seeding database:', error.message);
     if (error.name === 'MongoServerSelectionError') {

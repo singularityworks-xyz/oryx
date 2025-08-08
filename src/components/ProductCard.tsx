@@ -1,83 +1,111 @@
 'use client';
 
-import Image from 'next/image';
+import LazyImage from './LazyImage';
 import Link from 'next/link';
 import { useCartStore } from '@/store/cart';
-import { ShoppingCart } from 'lucide-react';
+import { ShoppingCart, Star } from 'lucide-react';
 
 interface ProductCardProps {
   product: {
     _id: string;
+    productId?: string;
     name: string;
     description: string;
-    price: number;
+    sellingPrice?: number;
+    price?: number;
+    costPrice?: number;
+    discount?: number;
     images: string[];
-    category: string;
+    categories?: string[];
+    category?: string;
     stock: number;
+    tags?: string[];
+    isTrending?: boolean;
   };
 }
 
 export default function ProductCard({ product }: ProductCardProps) {
   const { addItem } = useCartStore();
+  
+  // Use sellingPrice if available, otherwise fall back to price
+  const displayPrice = product.sellingPrice || product.price || 0;
+  const originalPrice = product.costPrice || product.price || 0;
+  const discount = product.discount || 0;
+  const discountPercentage = originalPrice > 0 ? Math.round((discount / originalPrice) * 100) : 0;
 
   const handleAddToCart = () => {
     addItem({
       id: product._id,
       name: product.name,
-      price: product.price,
+      price: displayPrice,
       image: product.images[0],
     });
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
-      <Link href={`/products/${product._id}`}>
-        <div className="relative h-48 w-full">
-          <Image
+    <div className="group bg-white overflow-hidden hover:shadow-2xl transition-all duration-500 border border-gray-100 hover:border-gray-300 flex flex-col h-full">
+      {/* Image Container */}
+      <div className="relative h-80 w-full overflow-hidden bg-gray-50 flex-shrink-0">
+        <Link href={`/products/${product._id}`}>
+          <LazyImage
             src={product.images[0]}
             alt={product.name}
             fill
-            className="object-cover"
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            className="object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
+            sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, (max-width: 1280px) 25vw, 20vw"
+            quality="auto:best"
+            priority={false}
+            threshold={0.1}
+            rootMargin="100px"
           />
-        </div>
-      </Link>
+          {/* Subtle overlay on hover */}
+          <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity duration-500"></div>
+        </Link>
+        
+        {/* Discount Badge */}
+        {discountPercentage > 0 && (
+          <div className="absolute top-4 left-4 bg-black text-white text-xs font-light px-3 py-1 tracking-wider">
+            -{discountPercentage}%
+          </div>
+        )}
+        
+        {/* Trending Badge */}
+        {product.isTrending && (
+          <div className="absolute top-4 right-4 bg-white text-black text-xs font-light px-3 py-1 tracking-wider border border-gray-200">
+            <Star className="w-3 h-3 fill-current inline mr-1" />
+            Trending
+          </div>
+        )}
+        
+        {/* Add to Cart Button */}
+        <button
+          onClick={handleAddToCart}
+          disabled={product.stock === 0}
+          className="absolute bottom-4 right-4 bg-black text-white p-3 rounded-full hover:bg-gray-800 disabled:bg-gray-400 disabled:cursor-not-allowed transition-all duration-300 opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 shadow-lg hover:shadow-xl"
+          title="Add to cart"
+        >
+          <ShoppingCart className="w-4 h-4" />
+        </button>
+      </div>
       
-      <div className="p-4">
-        <Link href={`/products/${product._id}`}>
-          <h3 className="text-lg font-semibold text-gray-900 mb-2 hover:text-blue-600 transition-colors">
+      {/* Content */}
+      <div className="p-8 flex flex-col flex-1">
+        <Link href={`/products/${product._id}`} className="flex-1">
+          <h3 className="text-lg font-outfit font-medium text-gray-900 mb-6 hover:text-gray-600 transition-colors duration-300 leading-relaxed tracking-wide">
             {product.name}
           </h3>
         </Link>
         
-        <p className="text-gray-600 text-sm mb-3 line-clamp-2">
-          {product.description}
-        </p>
-        
-        <div className="flex items-center justify-between">
-          <div>
-            <span className="text-2xl font-bold text-gray-900">
-              ${product.price.toFixed(2)}
-            </span>
-            <span className="text-sm text-gray-500 ml-2">
-              {product.stock > 0 ? `${product.stock} in stock` : 'Out of stock'}
-            </span>
-          </div>
-          
-          <button
-            onClick={handleAddToCart}
-            disabled={product.stock === 0}
-            className="bg-blue-600 text-white p-2 rounded-full hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
-            title="Add to cart"
-          >
-            <ShoppingCart className="w-5 h-5" />
-          </button>
-        </div>
-        
-        <div className="mt-2">
-          <span className="inline-block bg-gray-100 text-gray-800 text-xs px-2 py-1 rounded-full">
-            {product.category}
+        {/* Price Section - Moved to bottom */}
+        <div className="flex items-baseline gap-3 mt-auto">
+          <span className="text-2xl font-outfit font-normal text-gray-900 tracking-wide">
+            <span className='text-gray-700 text-sm'>QAR <br></br></span> {displayPrice.toFixed(2)}
           </span>
+          {discountPercentage > 0 && (
+            <span className="text-sm font-outfit font-light text-gray-400 line-through tracking-wide">
+              QAR {originalPrice.toFixed(2)}
+            </span>
+          )}
         </div>
       </div>
     </div>

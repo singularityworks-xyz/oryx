@@ -1,24 +1,86 @@
 import Link from 'next/link';
 import { ShoppingBag, Star, Truck, Shield, ArrowRight } from 'lucide-react';
 import Image from 'next/image';
+import ProductCard from '@/components/ProductCard';
+import dbConnect from '@/lib/db';
+import Product from '@/models/Product';
 
-export default function Home() {
+// Interface for the product data that ProductCard expects
+interface ProductCardData {
+  _id: string;
+  productId?: string;
+  name: string;
+  description: string;
+  sellingPrice?: number;
+  price?: number;
+  costPrice?: number;
+  discount?: number;
+  images: string[];
+  categories?: string[];
+  category?: string;
+  stock: number;
+  tags?: string[];
+  isTrending?: boolean;
+}
+
+// Add this function to fetch homepage products
+async function getHomepageProducts(): Promise<ProductCardData[]> {
+  try {
+    const connection = await dbConnect();
+    
+    if (!connection) {
+      console.error('Database connection not available');
+      return [];
+    }
+
+    const products = await Product.find({ 
+      isActive: true, 
+      tags: { $in: ['homepage'] } 
+    })
+    .sort({ createdAt: -1 })
+    .limit(8)
+    .lean();
+
+    // Transform the data to match the ProductCard interface
+    return products.map((product: any) => ({
+      _id: product._id.toString(),
+      productId: product.productId,
+      name: product.name,
+      description: product.description,
+      sellingPrice: product.sellingPrice,
+      costPrice: product.costPrice,
+      discount: product.discount,
+      images: product.images,
+      categories: product.categories,
+      stock: product.stock,
+      tags: product.tags,
+      isTrending: product.isTrending,
+    })) || [];
+  } catch (error) {
+    console.error('Error fetching homepage products:', error);
+    return [];
+  }
+}
+
+export default async function Home() {
+  const homepageProducts = await getHomepageProducts();
+
   return (
     <div className="bg-white">
       {/* First Section - Blank State */}
       <section className="h-[calc(100vh-64px)] bg-white">
         {/* Starting Div */}
-        <div className="h-full max-w-[1240px] mx-auto flex">
+        <div className="h-full max-w-[1240px] mx-auto flex flex-col lg:flex-row">
           {/* Left Section - 60% */}
-          <div className="w-[70%] overflow-hidden">
+          <div className="w-full lg:w-[70%] overflow-hidden order-2 lg:order-1 flex flex-col justify-between lg:justify-start h-full">
             {/* Plates Container */}
-            <div className="flex items-center justify-end px-8 py-8">
+            <div className="flex items-center justify-center lg:justify-end px-4 sm:px-6 lg:px-8 py-4 lg:py-8 flex-1 lg:flex-none">
               <Image
                   src="/white-plate.png"
                   alt="White Plate"
                   width={300}
                   height={300}
-                  className="w-2/5 h-auto object-contain mr-8"
+                  className="w-1/3 sm:w-2/5 lg:w-2/5 h-auto object-contain mr-4 lg:mr-8"
                   quality={100}
                   priority
               />
@@ -27,7 +89,7 @@ export default function Home() {
                 alt="Black Plate"
                 width={300}
                 height={300}
-                className="w-2/5 h-auto object-contain"
+                className="w-1/3 sm:w-2/5 lg:w-2/5 h-auto object-contain"
                 quality={100}
                 priority
               />
@@ -35,25 +97,25 @@ export default function Home() {
             </div>
             
             {/* Text Section */}
-            <div className="my-8 pb-8 overflow-hidden">
-              <h1 className="text-4xl md:text-4xl lg:text-6xl font-playfair font-normal text-gray-900 leading-tight">
+            <div className="my-4 lg:my-8 pb-4 lg:pb-8 px-4 sm:px-6 lg:px-8 flex-shrink-0">
+              <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-6xl font-playfair font-normal text-gray-900 leading-tight">
                 Every <span className="italic font-medium">detail</span> matters.<br />
-                <span className="whitespace-nowrap">Every meal deserves <span className="italic font-medium">elegance</span>.</span>
+                <span>Every meal deserves <span className="italic font-medium">elegance</span>.</span>
               </h1>
                 
                 {/* Shop Now Button */}
-                <div className="mt-8">
+                <div className="mt-4 lg:mt-8 ">
                   <Link
                     href="/products"
-                    className="inline-flex items-center px-8 py-4 bg-gray-900 text-white font-medium text-lg hover:bg-gray-800 transition-colors duration-300 border border-gray-900 hover:border-gray-800"
+                    className="inline-flex items-center px-6 lg:px-8 py-3 lg:py-4 bg-gray-900 text-white font-medium text-base lg:text-lg hover:bg-gray-800 transition-colors duration-300 border border-gray-900 hover:border-gray-800"
                   >
                     Shop Now
-                    <ArrowRight className="ml-3 w-5 h-5" />
+                    <ArrowRight className="ml-2 lg:ml-3 w-4 h-4 lg:w-5 lg:h-5" />
                   </Link>
                 </div>
                 
                 {/* Wooden Bowl */}
-                <div className="mt-8 relative overflow-hidden">
+                <div className="mt-4 lg:mt-8 relative overflow-hidden hidden lg:block">
                   <Image
                     src="/wooden-bowl.png"
                     alt="Wooden Bowl"
@@ -68,17 +130,17 @@ export default function Home() {
             </div>
           
           {/* Right Section - 40% */}
-          <div className="w-[30%] flex flex-col">
+          <div className="w-full lg:w-[30%] flex flex-col order-1 lg:order-2">
             {/* Top Section */}
-            <div className="h-1/2 relative">
+            <div className="h-32 sm:h-40 lg:h-1/2 relative">
               {/* Logo in top-right corner */}
-              <div className="absolute top-4 right-4 mt-8 mr-8">
+              <div className="absolute top-2 right-2 sm:top-4 sm:right-4 lg:top-4 lg:right-4 lg:mt-8 lg:mr-8">
                 <Image
                   src="/oryx-logo-full.svg"
                   alt="Oryx Logo"
                   width={120}
                   height={40}
-                  className="h-20 w-auto"
+                  className="h-12 sm:h-16 lg:h-20 w-auto"
                   quality={100}
                   priority
                 />
@@ -87,14 +149,14 @@ export default function Home() {
             </div>
             
             {/* Bottom Section */}
-            <div className="h-1/2 flex items-center justify-center overflow-hidden">
-              <div className="flex w-full h-full justify-between ">
+            <div className="h-32 sm:h-40 lg:h-1/2 flex items-center justify-center overflow-hidden hidden lg:flex">
+              <div className="flex w-full h-full justify-between px-4 sm:px-6 lg:px-0">
                 <Image
                     src="/fork.png"
                     alt="Fork"
                     width={2500}
                     height={3000}
-                    className="w-3/5 h-full object-cover object-top"
+                    className="w-2/5 sm:w-3/5 lg:w-3/5 h-full object-cover object-top"
                     quality={100}
                     priority
                 />
@@ -103,13 +165,50 @@ export default function Home() {
                   alt="Spoon"
                   width={2000}
                   height={3000}
-                  className="w-3/5 h-full object-cover object-top"
+                  className="w-2/5 sm:w-3/5 lg:w-3/5 h-full object-cover object-top"
                   quality={100}
                   priority
                 />
                 
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Second Section - SHOP */}
+      <section className="py-16 lg:py-24 bg-white">
+        <div className="max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Section Header */}
+          <div className="text-center mb-12 lg:mb-16">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-playfair font-normal text-gray-900 mb-4">
+              SHOP
+            </h2>
+            <div className="w-24 h-px bg-gray-300 mx-auto"></div>
+          </div>
+
+          {/* Products Grid */}
+          {homepageProducts.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
+              {homepageProducts.map((product) => (
+                <ProductCard key={product._id} product={product} />
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-12">
+              <p className="text-gray-600 text-lg">No products available for homepage display.</p>
+            </div>
+          )}
+
+          {/* View All Products Button */}
+          <div className="text-center mt-12 lg:mt-16">
+            <Link
+              href="/products"
+              className="inline-flex items-center px-8 py-4 bg-gray-900 text-white font-medium text-lg hover:bg-gray-800 transition-colors duration-300 border border-gray-900 hover:border-gray-800"
+            >
+              View All Products
+              <ArrowRight className="ml-3 w-5 h-5" />
+            </Link>
           </div>
         </div>
       </section>
