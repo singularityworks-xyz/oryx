@@ -219,7 +219,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json(
         { 
           products: [],
-          pagination: { page: 1, limit: 12, total: 0, pages: 0 },
+          pagination: { page: 1, limit: 40, total: 0, pages: 0 },
           message: 'Database connection not available. Please try again later.'
         },
         { status: 503 }
@@ -232,7 +232,7 @@ export async function GET(request: NextRequest) {
     
     // Parse query parameters with validation
     const page = Math.max(1, parseInt(searchParams.get('page') || '1'));
-    const limit = Math.min(50, Math.max(1, parseInt(searchParams.get('limit') || '12'))); // Cap at 50 for performance
+    const limit = Math.min(50, Math.max(1, parseInt(searchParams.get('limit') || '40'))); // Default to 40, cap at 50 for performance
     
     // Filter parameters
     const category = searchParams.get('category') || undefined;
@@ -297,7 +297,8 @@ export async function GET(request: NextRequest) {
         pages: totalPages,
         hasNext,
         hasPrev,
-        currentPage: page
+        currentPage: page,
+        productsPerPage: limit
       },
       filters: {
         applied: {
@@ -352,7 +353,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(
       { 
         products: [],
-        pagination: { page: 1, limit: 12, total: 0, pages: 0 },
+        pagination: { page: 1, limit: 40, total: 0, pages: 0 },
         error: 'Failed to fetch products',
         message: error instanceof Error ? error.message : 'Unknown error occurred'
       },
