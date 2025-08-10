@@ -38,7 +38,7 @@ async function getHomepageProducts(): Promise<ProductCardData[]> {
       tags: { $in: ['homepage'] } 
     })
     .sort({ createdAt: -1 })
-    .limit(8)
+    .limit(16)
     .lean();
 
     // Transform the data to match the ProductCard interface
@@ -180,37 +180,49 @@ export default async function Home() {
       </section>
 
       {/* Second Section - SHOP */}
-      <section className="py-16 lg:py-24 bg-white">
-        <div className="max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="py-20 lg:py-32 bg-gradient-to-b from-white to-gray-50/30">
+        <div className="max-w-[1400px] mx-auto px-6 sm:px-8 lg:px-12">
           {/* Section Header */}
-          <div className="text-center mb-12 lg:mb-16">
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-playfair font-normal text-gray-900 mb-4">
-              SHOP
+          <div className="text-center mb-20 lg:mb-24">
+            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-playfair font-light text-gray-900 mb-8 tracking-wide">
+              CURATED COLLECTION
             </h2>
-            <div className="w-24 h-px bg-gray-300 mx-auto"></div>
+            <div className="w-32 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent mx-auto"></div>
+            <p className="text-lg text-gray-600 mt-8 max-w-2xl mx-auto font-outfit font-light leading-relaxed">
+              Discover our handpicked selection of premium kitchen essentials, each piece crafted with attention to detail and timeless elegance.
+            </p>
           </div>
 
-          {/* Products Grid */}
+          {/* Products Grid - 8x2 Layout (4 columns x 2 rows) */}
           {homepageProducts.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
-              {homepageProducts.map((product) => (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-12 mb-20">
+              {homepageProducts.slice(0, 8).map((product) => (
                 <ProductCard key={product._id} product={product} />
               ))}
             </div>
           ) : (
-            <div className="text-center py-12">
-              <p className="text-gray-600 text-lg">No products available for homepage display.</p>
+            <div className="text-center py-20">
+              <p className="text-gray-500 text-lg font-outfit font-light">No products available for homepage display.</p>
+            </div>
+          )}
+
+          {/* Second Row - 8x2 Layout */}
+          {homepageProducts.length > 8 && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-12 mb-20">
+              {homepageProducts.slice(8, 16).map((product) => (
+                <ProductCard key={product._id} product={product} />
+              ))}
             </div>
           )}
 
           {/* View All Products Button */}
-          <div className="text-center mt-12 lg:mt-16">
+          <div className="text-center">
             <Link
               href="/products"
-              className="inline-flex items-center px-8 py-4 bg-gray-900 text-white font-medium text-lg hover:bg-gray-800 transition-colors duration-300 border border-gray-900 hover:border-gray-800"
+              className="inline-flex items-center px-12 py-5 bg-gray-900 text-white font-outfit font-light text-lg hover:bg-gray-800 transition-all duration-500 border border-gray-900 hover:border-gray-800 tracking-widest hover:scale-105 transform"
             >
-              View All Products
-              <ArrowRight className="ml-3 w-5 h-5" />
+              EXPLORE COLLECTION
+              <ArrowRight className="ml-4 w-5 h-5" />
             </Link>
           </div>
         </div>
