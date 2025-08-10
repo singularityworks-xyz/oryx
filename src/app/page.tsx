@@ -29,7 +29,7 @@ async function getHomepageProducts(): Promise<ProductCardData[]> {
     const connection = await dbConnect();
     
     if (!connection) {
-      console.error('Database connection not available');
+      // Silently handle missing database connection - this is expected in development
       return [];
     }
 
@@ -57,7 +57,10 @@ async function getHomepageProducts(): Promise<ProductCardData[]> {
       isTrending: product.isTrending as boolean | undefined,
     })) || [];
   } catch (error) {
-    console.error('Error fetching homepage products:', error);
+    // Only log errors in development, silently handle in production
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Error fetching homepage products:', error);
+    }
     return [];
   }
 }

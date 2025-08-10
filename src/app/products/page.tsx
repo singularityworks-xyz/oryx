@@ -6,12 +6,17 @@ import { Search, Filter } from 'lucide-react';
 
 interface Product {
   _id: string;
+  productId?: string;
   name: string;
   description: string;
-  price: number;
+  sellingPrice?: number;
+  costPrice?: number;
+  discount?: number;
   images: string[];
-  category: string;
+  categories?: string[];
   stock: number;
+  tags?: string[];
+  isTrending?: boolean;
 }
 
 export default function ProductsPage() {
@@ -21,6 +26,7 @@ export default function ProductsPage() {
   const [selectedCategory, setSelectedCategory] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [error, setError] = useState<string | null>(null);
 
   const categories = [
     'electronics',
@@ -34,6 +40,7 @@ export default function ProductsPage() {
   const fetchProducts = useCallback(async () => {
     try {
       setLoading(true);
+      setError(null);
       const params = new URLSearchParams({
         page: currentPage.toString(),
         limit: '12',
@@ -51,13 +58,19 @@ export default function ProductsPage() {
       const data = await response.json();
 
       if (response.ok) {
-        setProducts(data.products);
-        setTotalPages(data.pagination.pages);
+        setProducts(data.products || []);
+        setTotalPages(data.pagination?.pages || 1);
       } else {
-        console.error('Failed to fetch products:', data.error);
+        const errorMessage = data.error || data.message || 'Failed to fetch products';
+        setError(errorMessage);
+        console.error('Failed to fetch products:', errorMessage);
+        setProducts([]);
       }
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Network error occurred';
+      setError(errorMessage);
       console.error('Error fetching products:', error);
+      setProducts([]);
     } finally {
       setLoading(false);
     }
@@ -128,10 +141,25 @@ export default function ProductsPage() {
         </div>
       </div>
 
+      {/* Error Display */}
+      {error && (
+        <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+          <p className="text-red-700">{error}</p>
+          <button 
+            onClick={() => fetchProducts()}
+            className="mt-2 text-sm text-red-600 hover:text-red-800 underline"
+          >
+            Try again
+          </button>
+        </div>
+      )}
+
       {/* Products Grid */}
       {products.length === 0 ? (
         <div className="text-center py-12">
-          <p className="text-gray-600 text-lg">No products found.</p>
+          <p className="text-gray-600 text-lg">
+            {error ? 'Unable to load products. Please try again.' : 'No products found.'}
+          </p>
         </div>
       ) : (
         <>
