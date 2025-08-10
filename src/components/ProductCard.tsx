@@ -48,7 +48,7 @@ export default function ProductCard({ product }: ProductCardProps) {
       <div className="absolute inset-0 bg-gradient-to-br from-gray-50/50 to-white opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
       
       {/* Image Container */}
-      <div className="relative h-80 w-full overflow-hidden bg-gray-50 flex-shrink-0">
+      <div className="relative h-48 sm:h-64 md:h-72 lg:h-80 w-full overflow-hidden bg-gray-50 flex-shrink-0">
         <Link href={`/products/${product._id}`}>
           <LazyImage
             src={product.images[0]}
@@ -67,14 +67,14 @@ export default function ProductCard({ product }: ProductCardProps) {
         
         {/* Discount Badge */}
         {discountPercentage > 0 && (
-          <div className="absolute top-4 left-4 bg-black text-white text-xs font-outfit font-light px-3 py-1.5 tracking-widest shadow-lg">
+          <div className="absolute top-2 sm:top-4 left-2 sm:left-4 bg-black text-white text-xs font-outfit font-light px-2 sm:px-3 py-1 sm:py-1.5 tracking-widest shadow-lg">
             -{discountPercentage}%
           </div>
         )}
         
         {/* Trending Badge */}
         {product.isTrending && (
-          <div className="absolute top-4 right-4 bg-white text-black text-xs font-outfit font-light px-3 py-1.5 tracking-widest border border-gray-200 shadow-lg">
+          <div className="absolute top-2 sm:top-4 right-2 sm:right-4 bg-white text-black text-xs font-outfit font-light px-2 sm:px-3 py-1 sm:py-1.5 tracking-widest border border-gray-200 shadow-lg">
             <Star className="w-3 h-3 fill-current inline mr-1" />
             TRENDING
           </div>
@@ -84,29 +84,29 @@ export default function ProductCard({ product }: ProductCardProps) {
         <button
           onClick={handleAddToCart}
           disabled={product.stock === 0}
-          className="absolute bottom-4 right-4 bg-black text-white p-3.5 rounded-full hover:bg-gray-800 disabled:bg-gray-400 disabled:cursor-not-allowed transition-all duration-500 opacity-0 group-hover:opacity-100 transform translate-y-3 group-hover:translate-y-0 shadow-lg hover:shadow-xl hover:scale-110"
+          className="absolute bottom-2 sm:bottom-4 right-2 sm:right-4 bg-black text-white p-2.5 sm:p-3.5 rounded-full hover:bg-gray-800 disabled:bg-gray-400 disabled:cursor-not-allowed transition-all duration-500 opacity-0 group-hover:opacity-100 transform translate-y-3 group-hover:translate-y-0 shadow-lg hover:shadow-xl hover:scale-110"
           title="Add to cart"
         >
-          <ShoppingCart className="w-4 h-4" />
+          <ShoppingCart className="w-3 h-3 sm:w-4 sm:h-4" />
         </button>
       </div>
       
       {/* Content */}
-      <div className="p-8 flex flex-col flex-1 relative z-10">
+      <div className="p-4 sm:p-6 md:p-8 flex flex-col flex-1 relative z-10">
         <Link href={`/products/${product._id}`} className="flex-1">
-          <h3 className="text-lg font-outfit font-medium text-gray-900 mb-6 hover:text-gray-600 transition-colors duration-300 leading-relaxed tracking-wide">
+          <h3 className="text-sm sm:text-base md:text-lg font-outfit font-medium text-gray-900 mb-4 sm:mb-6 hover:text-gray-600 transition-colors duration-300 leading-relaxed tracking-wide">
             {product.name}
           </h3>
         </Link>
         
         {/* Price Section - Moved to bottom */}
-        <div className="flex items-baseline gap-4 mt-auto">
-          <span className="text-2xl font-outfit font-light text-gray-900 tracking-wide">
-            <span className='text-gray-500 text-sm font-outfit font-light tracking-wider'>QAR</span><br />
+        <div className="flex items-baseline gap-2 sm:gap-4 mt-auto">
+          <span className="text-lg sm:text-xl md:text-2xl font-outfit font-light text-gray-900 tracking-wide">
+            <span className='text-gray-500 text-xs sm:text-sm font-outfit font-light tracking-wider'>QAR</span><br />
             {displayPrice.toFixed(2)}
           </span>
           {discountPercentage > 0 && (
-            <span className="text-sm font-outfit font-light text-gray-400 line-through tracking-wide">
+            <span className="text-xs sm:text-sm font-outfit font-light text-gray-400 line-through tracking-wide">
               QAR {originalPrice.toFixed(2)}
             </span>
           )}
