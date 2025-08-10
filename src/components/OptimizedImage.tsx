@@ -30,13 +30,10 @@ export default function OptimizedImage({
   priority = false,
   sizes,
   quality = 'auto:best',
-  format = 'auto',
-  crop = 'limit',
-  responsive = false,
   placeholder = 'empty',
   blurDataURL,
 }: OptimizedImageProps) {
-  const { src: optimizedSrc, isLoading, hasError, isLoaded, retry } = useImageLoader({
+  const { src: optimizedSrc, isLoading, hasError, retry } = useImageLoader({
     src,
     width,
     height,

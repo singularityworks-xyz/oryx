@@ -25,7 +25,7 @@ export async function GET(request: NextRequest) {
     const limit = parseInt(searchParams.get('limit') || '12');
     const skip = (page - 1) * limit;
 
-    let query: any = { isActive: true };
+    const query: Record<string, unknown> = { isActive: true };
 
     if (category) {
       query.categories = category;

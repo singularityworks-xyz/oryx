@@ -53,11 +53,12 @@ export default function LazyImage({
       rootMargin,
     });
 
-    observer.observe(imageRef.current);
+    const currentRef = imageRef.current;
+    observer.observe(currentRef);
 
     return () => {
-      if (imageRef.current) {
-        observer.unobserve(imageRef.current);
+      if (currentRef) {
+        observer.unobserve(currentRef);
       }
     };
   }, [handleIntersection, priority, threshold, rootMargin]);

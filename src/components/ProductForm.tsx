@@ -29,7 +29,7 @@ interface ProductFormProps {
     material?: string;
     warranty?: string;
   };
-  onSubmit: (productData: any) => void;
+  onSubmit: (productData: Record<string, unknown>) => void;
   isLoading?: boolean;
 }
 
@@ -138,11 +138,11 @@ export default function ProductForm({ product, onSubmit, isLoading = false }: Pr
     }
   };
 
-  const handleInputChange = (field: string, value: any) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-    if (errors[field]) {
-      setErrors(prev => ({ ...prev, [field]: '' }));
-    }
+  const handleInputChange = (field: string, value: string | number | boolean | string[] | Record<string, unknown>) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: value
+    }));
   };
 
   const handleCategoryChange = (category: string) => {

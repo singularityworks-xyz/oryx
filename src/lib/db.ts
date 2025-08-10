@@ -11,18 +11,18 @@ if (!MONGODB_URI) {
  * in development. This prevents connections growing exponentially
  * during API Route usage.
  */
-let cached = (global as any).mongoose;
+const cached = (global as Record<string, unknown>).mongoose as { conn: unknown; promise: unknown } | undefined;
 
 if (!cached) {
-  cached = (global as any).mongoose = { conn: null, promise: null };
+  (global as Record<string, unknown>).mongoose = { conn: null, promise: null };
 }
 
 async function dbConnect() {
-  if (cached.conn) {
+  if (cached?.conn) {
     return cached.conn;
   }
 
-  if (!cached.promise) {
+  if (!cached?.promise) {
     const opts = {
       bufferCommands: false,
       maxPoolSize: 10,
@@ -30,21 +30,27 @@ async function dbConnect() {
       socketTimeoutMS: 45000,
     };
 
-    cached.promise = mongoose.connect(MONGODB_URI, opts).then((mongoose) => {
-      return mongoose;
-    });
+    if (cached) {
+      cached.promise = mongoose.connect(MONGODB_URI, opts).then((mongoose) => {
+        return mongoose;
+      });
+    }
   }
 
   try {
-    cached.conn = await cached.promise;
+    if (cached) {
+      cached.conn = await cached.promise;
+    }
   } catch (e) {
-    cached.promise = null;
+    if (cached) {
+      cached.promise = null;
+    }
     console.error('MongoDB connection error:', (e as Error).message);
     // Don't throw the error, just return null to handle gracefully
     return null;
   }
 
-  return cached.conn;
+  return cached?.conn;
 }
 
 export default dbConnect; 

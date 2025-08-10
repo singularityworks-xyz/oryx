@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import ProductForm from '@/components/ProductForm';
-import { Plus, Edit, Trash2, Eye } from 'lucide-react';
+import { Plus, Edit, Trash2 } from 'lucide-react';
 import Image from 'next/image';
 
 interface Product {
@@ -62,7 +62,7 @@ export default function AdminProductsPage() {
     }
   };
 
-  const handleCreateProduct = async (productData: any) => {
+  const handleCreateProduct = async (productData: Partial<Product>) => {
     setIsSubmitting(true);
     try {
       const response = await fetch('/api/products', {
@@ -90,7 +90,7 @@ export default function AdminProductsPage() {
     }
   };
 
-  const handleUpdateProduct = async (productData: any) => {
+  const handleUpdateProduct = async (productData: Partial<Product>) => {
     if (!editingProduct) return;
 
     setIsSubmitting(true);

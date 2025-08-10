@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { ShoppingBag, Star, Truck, Shield, ArrowRight } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import Image from 'next/image';
 import ProductCard from '@/components/ProductCard';
 import dbConnect from '@/lib/db';
@@ -42,19 +42,19 @@ async function getHomepageProducts(): Promise<ProductCardData[]> {
     .lean();
 
     // Transform the data to match the ProductCard interface
-    return products.map((product: any) => ({
-      _id: product._id.toString(),
-      productId: product.productId,
-      name: product.name,
-      description: product.description,
-      sellingPrice: product.sellingPrice,
-      costPrice: product.costPrice,
-      discount: product.discount,
-      images: product.images,
-      categories: product.categories,
-      stock: product.stock,
-      tags: product.tags,
-      isTrending: product.isTrending,
+    return products.map((product: Record<string, unknown>) => ({
+      _id: (product._id as { toString(): string }).toString(),
+      productId: product.productId as string | undefined,
+      name: product.name as string,
+      description: product.description as string,
+      sellingPrice: product.sellingPrice as number | undefined,
+      costPrice: product.costPrice as number | undefined,
+      discount: product.discount as number | undefined,
+      images: product.images as string[],
+      categories: product.categories as string[] | undefined,
+      stock: product.stock as number,
+      tags: product.tags as string[] | undefined,
+      isTrending: product.isTrending as boolean | undefined,
     })) || [];
   } catch (error) {
     console.error('Error fetching homepage products:', error);

@@ -115,7 +115,7 @@ export const getResponsiveImageUrls = (originalUrl: string): {
 // Utility function to delete image from Cloudinary
 export const deleteImage = async (publicId: string): Promise<void> => {
   return new Promise((resolve, reject) => {
-    cloudinary.uploader.destroy(publicId, (error, result) => {
+    cloudinary.uploader.destroy(publicId, (error) => {
       if (error) {
         reject(error);
       } else {

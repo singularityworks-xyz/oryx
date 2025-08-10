@@ -24,7 +24,6 @@ export function useImageLoader({
   width,
   height,
   quality = 'auto:best',
-  priority = false,
   onLoad,
   onError,
 }: UseImageLoaderOptions): UseImageLoaderReturn {

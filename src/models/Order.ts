@@ -13,7 +13,9 @@ export interface IOrder extends Document {
   items: IOrderItem[];
   totalAmount: number;
   status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
-  paymentStatus: 'pending' | 'paid' | 'failed' | 'refunded';
+  orderStatus: 'Confirmed' | 'Processing' | 'Shipped' | 'Delivered' | 'Cancelled';
+  paymentStatus: 'pending' | 'paid' | 'failed' | 'refunded' | 'Pending';
+  paymentMethod: string;
   paymentIntentId?: string;
   shippingAddress: {
     street: string;
@@ -68,10 +70,19 @@ const OrderSchema: Schema = new Schema({
     enum: ['pending', 'processing', 'shipped', 'delivered', 'cancelled'],
     default: 'pending',
   },
+  orderStatus: {
+    type: String,
+    enum: ['Confirmed', 'Processing', 'Shipped', 'Delivered', 'Cancelled'],
+    default: 'Confirmed',
+  },
   paymentStatus: {
     type: String,
-    enum: ['pending', 'paid', 'failed', 'refunded'],
+    enum: ['pending', 'paid', 'failed', 'refunded', 'Pending'],
     default: 'pending',
+  },
+  paymentMethod: {
+    type: String,
+    default: 'Cash on Delivery',
   },
   paymentIntentId: {
     type: String,
@@ -107,5 +118,6 @@ const OrderSchema: Schema = new Schema({
 OrderSchema.index({ userId: 1, createdAt: -1 });
 OrderSchema.index({ status: 1 });
 OrderSchema.index({ paymentStatus: 1 });
+OrderSchema.index({ orderStatus: 1 });
 
 export default mongoose.models.Order || mongoose.model<IOrder>('Order', OrderSchema); 

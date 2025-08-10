@@ -121,25 +121,28 @@ const ProductSchema: Schema = new Schema({
 
 // Pre-save middleware to calculate selling price
 ProductSchema.pre('save', function(next) {
-  const doc = this as any;
+  const doc = this as Document & Record<string, unknown>;
   if (doc.isModified('costPrice') || doc.isModified('discount')) {
-    doc.sellingPrice = doc.costPrice - doc.discount;
+    const costPrice = (doc as Record<string, unknown>).costPrice as number;
+    const discount = (doc as Record<string, unknown>).discount as number;
+    (doc as Record<string, unknown>).sellingPrice = costPrice - discount;
   }
   next();
 });
 
 // Create indexes for better search performance
 ProductSchema.index({ name: 'text', description: 'text', tags: 'text' });
-ProductSchema.index({ productId: 1 });
 ProductSchema.index({ categories: 1 });
 ProductSchema.index({ isTrending: 1 });
 ProductSchema.index({ isActive: 1 });
 
 // Virtual for discount percentage
 ProductSchema.virtual('discountPercentage').get(function() {
-  const doc = this as any;
-  if (doc.costPrice > 0) {
-    return Math.round((doc.discount / doc.costPrice) * 100);
+  const doc = this as Document & Record<string, unknown>;
+  const costPrice = (doc as Record<string, unknown>).costPrice as number;
+  const discount = (doc as Record<string, unknown>).discount as number;
+  if (costPrice > 0) {
+    return Math.round((discount / costPrice) * 100);
   }
   return 0;
 });

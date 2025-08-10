@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { useSession, signOut } from 'next-auth/react';
 import { useCartStore } from '@/store/cart';
 import { ShoppingCart, User, Search, Settings, LogOut, Heart, Package, Shield } from 'lucide-react';
+import { Session } from 'next-auth';
 
 export default function Navbar() {
   const { data: session } = useSession();
@@ -15,6 +16,9 @@ export default function Navbar() {
   const profileDropdownRef = useRef<HTMLDivElement>(null);
 
   const itemCount = getItemCount();
+
+  // Type assertion for session
+  const typedSession = session as Session | null;
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -91,7 +95,7 @@ export default function Navbar() {
               )}
             </Link>
             
-            {session ? (
+            {typedSession ? (
               <div className="relative" ref={profileDropdownRef}>
                 <button
                   onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
@@ -105,8 +109,8 @@ export default function Navbar() {
                   <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 border border-gray-200">
                     {/* User Info */}
                     <div className="px-4 py-2 border-b border-gray-100">
-                      <p className="text-sm font-medium text-gray-900">{session.user?.name}</p>
-                      <p className="text-xs text-gray-500">{session.user?.email}</p>
+                      <p className="text-sm font-medium text-gray-900">{typedSession.user?.name}</p>
+                      <p className="text-xs text-gray-500">{typedSession.user?.email}</p>
                     </div>
 
                     {/* Profile Options */}
@@ -138,7 +142,7 @@ export default function Navbar() {
                     </Link>
 
                     {/* Admin Dashboard - Only show for admin users */}
-                    {session.user?.role === 'admin' && (
+                    {typedSession?.user?.role === 'admin' && (
                       <Link
                         href="/admin"
                         className="flex items-center px-4 py-2 text-sm text-blue-600 hover:bg-blue-50 border-t border-gray-100"
@@ -230,7 +234,7 @@ export default function Navbar() {
               Search
             </button>
             
-            {session ? (
+            {typedSession ? (
               <>
                 <Link
                   href="/profile"
@@ -256,7 +260,7 @@ export default function Navbar() {
                   <Heart className="w-4 h-4 mr-2" />
                   Favorites
                 </Link>
-                {session.user?.role === 'admin' && (
+                {typedSession.user?.role === 'admin' && (
                   <Link
                     href="/admin"
                     className="text-blue-600 hover:text-blue-700 block px-3 py-2 rounded-md text-base font-medium flex items-center"

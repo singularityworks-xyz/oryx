@@ -1,20 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
+import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
-import Stripe from 'stripe';
 import dbConnect from '@/lib/db';
 import Order from '@/models/Order';
 import Product from '@/models/Product';
-
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2023-10-16',
-});
+import { Session } from 'next-auth';
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
+    const session = await getServerSession(authOptions) as Session | null;
     
-    if (!session) {
+    if (!session || !session.user?.id) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
@@ -43,7 +39,6 @@ export async function POST(request: NextRequest) {
     // Validate products and calculate total
     let totalAmount = 0;
     const orderItems = [];
-    const stripeLineItems = [];
 
     for (const item of items) {
       const product = await Product.findById(item.productId);
@@ -69,53 +64,38 @@ export async function POST(request: NextRequest) {
         quantity: item.quantity,
         image: product.images[0],
       });
-
-      stripeLineItems.push({
-        price_data: {
-          currency: 'usd',
-          product_data: {
-            name: product.name,
-            images: product.images,
-          },
-          unit_amount: Math.round(product.price * 100), // Convert to cents
-        },
-        quantity: item.quantity,
-      });
     }
 
-    // Create order in database
+    // Create order in database with COD status
     const order = new Order({
       userId: session.user.id,
       items: orderItems,
       totalAmount,
       shippingAddress,
+      paymentMethod: 'Cash on Delivery',
+      paymentStatus: 'Pending',
+      orderStatus: 'Confirmed'
     });
 
     await order.save();
 
-    // Create Stripe payment intent
-    const paymentIntent = await stripe.paymentIntents.create({
-      amount: Math.round(totalAmount * 100), // Convert to cents
-      currency: 'usd',
-      metadata: {
-        orderId: order._id.toString(),
-        userId: session.user.id,
-      },
-    });
-
-    // Update order with payment intent ID
-    await Order.findByIdAndUpdate(order._id, {
-      paymentIntentId: paymentIntent.id,
-    });
-
     return NextResponse.json({
-      clientSecret: paymentIntent.client_secret,
+      success: true,
       orderId: order._id,
+      message: 'Order placed successfully! Payment will be collected on delivery.',
+      order: {
+        id: order._id,
+        totalAmount,
+        items: orderItems,
+        shippingAddress,
+        paymentMethod: 'Cash on Delivery',
+        orderStatus: 'Confirmed'
+      }
     });
   } catch (error) {
-    console.error('Error creating checkout session:', error);
+    console.error('Error creating order:', error);
     return NextResponse.json(
-      { error: 'Failed to create checkout session' },
+      { error: 'Failed to create order' },
       { status: 500 }
     );
   }
