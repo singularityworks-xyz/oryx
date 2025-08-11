@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 import Image from 'next/image';
 import ProductCard from '@/components/ProductCard';
-import dbConnect from '@/lib/db';
+import { connect } from '@/hooks/lib/database';
 import Product from '@/models/Product';
 
 // Interface for the product data that ProductCard expects
@@ -26,7 +26,7 @@ interface ProductCardData {
 // Add this function to fetch homepage products
 async function getHomepageProducts(): Promise<ProductCardData[]> {
   try {
-    const connection = await dbConnect();
+    const connection = await connect();
     
     if (!connection) {
       // Silently handle missing database connection - this is expected in development

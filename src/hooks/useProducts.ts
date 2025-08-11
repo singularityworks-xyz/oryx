@@ -171,7 +171,7 @@ export function useProducts() {
         if (response.status === 503 && retryCount < 2) {
           console.log(`Retrying fetch (attempt ${retryCount + 1})...`);
           setTimeout(() => {
-            fetchProducts(page, append, retryCount + 1);
+            fetchProducts(page, retryCount + 1);
           }, 1000 * (retryCount + 1)); // Exponential backoff
           return;
         }
@@ -187,7 +187,7 @@ export function useProducts() {
       if (retryCount < 2) {
         console.log(`Retrying fetch due to error (attempt ${retryCount + 1})...`);
         setTimeout(() => {
-          fetchProducts(page, append, retryCount + 1);
+          fetchProducts(page, retryCount + 1);
         }, 1000 * (retryCount + 1)); // Exponential backoff
         return;
       }

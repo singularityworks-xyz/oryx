@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { preloadImage, getOptimizedImageUrlWithSize } from '@/lib/clientImageUtils';
+import { preloadImage, getOptimizedImageUrlWithSize } from '@/hooks/lib/clientImageUtils';
 
 interface UseImageLoaderOptions {
   src: string;

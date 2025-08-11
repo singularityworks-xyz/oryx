@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import dbConnect from '@/lib/db';
+import { connect } from '@/hooks/lib/database';
 import Product from '@/models/Product';
 
 export async function GET(
@@ -8,7 +8,7 @@ export async function GET(
 ) {
   const { id } = await params;
   try {
-    await dbConnect();
+    await connect();
 
     const product = await Product.findById(id).lean();
 
@@ -35,7 +35,7 @@ export async function PUT(
 ) {
   const { id } = await params;
   try {
-    await dbConnect();
+    await connect();
 
     const body = await request.json();
     const {
@@ -133,7 +133,7 @@ export async function DELETE(
 ) {
   const { id } = await params;
   try {
-    await dbConnect();
+    await connect();
 
     const product = await Product.findByIdAndDelete(id);
 

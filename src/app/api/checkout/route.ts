@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth/next';
-import { authOptions } from '@/lib/auth';
-import dbConnect from '@/lib/db';
+import { getServerSession } from 'next-auth';
+import { connect } from '@/hooks/lib/database';
+import { authOptions } from '@/hooks/lib/auth';
 import Order from '@/models/Order';
 import Product from '@/models/Product';
 import { Session } from 'next-auth';
@@ -34,7 +34,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    await dbConnect();
+    await connect();
 
     // Validate products and calculate total
     let totalAmount = 0;

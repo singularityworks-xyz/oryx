@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth/next';
-import { authOptions } from '@/lib/auth';
-import dbConnect from '@/lib/db';
+import { getServerSession } from 'next-auth';
+import { connect } from '@/hooks/lib/database';
+import { authOptions } from '@/hooks/lib/auth';
 import Product from '@/models/Product';
 
 export async function GET() {
@@ -48,7 +48,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    await dbConnect();
+    await connect();
 
     // Verify product exists and has sufficient stock
     const product = await Product.findById(productId);

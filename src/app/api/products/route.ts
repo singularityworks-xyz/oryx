@@ -1,40 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import dbConnect from '@/lib/db';
+import { connect, isHealthy } from '@/hooks/lib/database';
 import Product from '@/models/Product';
-
-// Retry function for database connection
-async function connectWithRetry(maxRetries = 3, delay = 1000): Promise<any> {
-  for (let i = 0; i < maxRetries; i++) {
-    try {
-      console.log(`connectWithRetry: Attempt ${i + 1} of ${maxRetries}`);
-      const connection = await dbConnect();
-      if (connection) {
-        console.log(`connectWithRetry: Success on attempt ${i + 1}`);
-        return connection;
-      }
-    } catch (error) {
-      console.error(`connectWithRetry: Connection attempt ${i + 1} failed:`, error);
-    }
-    
-    if (i < maxRetries - 1) {
-      console.log(`connectWithRetry: Waiting ${delay}ms before retry...`);
-      await new Promise(resolve => setTimeout(resolve, delay));
-    }
-  }
-  console.log('connectWithRetry: All attempts failed');
-  return null;
-}
-
-// Simple health check function
-async function checkDatabaseHealth(): Promise<boolean> {
-  try {
-    const connection = await dbConnect();
-    return !!connection;
-  } catch (error) {
-    console.error('checkDatabaseHealth: Error:', error);
-    return false;
-  }
-}
 
 // Build MongoDB aggregation pipeline for efficient filtering and sorting
 function buildAggregationPipeline(params: {
@@ -208,14 +174,11 @@ export async function GET(request: NextRequest) {
   try {
     console.log('Products API: Starting database connection...');
     
-    // Add a small delay to see if it's a timing issue
-    await new Promise(resolve => setTimeout(resolve, 100));
-    
-    // Try to connect with retry logic
-    const connection = await connectWithRetry();
+    // Use the simple database connection function
+    const connection = await connect();
     
     if (!connection) {
-      console.error('Products API: Failed to establish database connection after retries');
+      console.error('Products API: Failed to establish database connection');
       return NextResponse.json(
         { 
           products: [],
@@ -364,7 +327,14 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    await dbConnect();
+    const connection = await connect();
+    
+    if (!connection) {
+      return NextResponse.json(
+        { error: 'Database connection unavailable' },
+        { status: 503 }
+      );
+    }
 
     const body = await request.json();
     const {
@@ -445,14 +415,14 @@ export async function POST(request: NextRequest) {
       { status: 500 }
     );
   }
-} 
+}
 
 export async function HEAD(request: NextRequest) {
   try {
     console.log('Products API HEAD: Testing database connection...');
-    const isHealthy = await checkDatabaseHealth();
+    const healthy = await isHealthy();
     
-    if (isHealthy) {
+    if (healthy) {
       console.log('Products API HEAD: Database connection healthy');
       return new NextResponse(null, { status: 200 });
     } else {

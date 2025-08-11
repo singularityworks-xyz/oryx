@@ -2,7 +2,7 @@ import CredentialsProvider from 'next-auth/providers/credentials';
 import GoogleProvider from 'next-auth/providers/google';
 import { MongoDBAdapter } from '@auth/mongodb-adapter';
 import clientPromise from './mongodb';
-import dbConnect from './db';
+import { connect } from './database';
 import User from '@/models/User';
 import bcrypt from 'bcryptjs';
 
@@ -24,7 +24,7 @@ export const authOptions = {
           return null;
         }
 
-        await dbConnect();
+        await connect();
 
         const user = await User.findOne({ email: credentials.email });
 

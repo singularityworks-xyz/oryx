@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "seed": "node scripts/seed.js"
+    "seed": "node scripts/seed.js",
+    "test-db": "node scripts/test-connection.js"
   },
   "dependencies": {
     "@auth/mongodb-adapter": "^3.10.0",
