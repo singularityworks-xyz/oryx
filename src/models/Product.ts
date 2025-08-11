@@ -23,6 +23,10 @@ export interface IProduct extends Document {
   brand?: string;
   material?: string;
   warranty?: string;
+  averageRating: number;
+  totalRatings: number;
+  ratings: mongoose.Types.ObjectId[];
+  comments: mongoose.Types.ObjectId[];
   createdAt: Date;
   updatedAt: Date;
 }

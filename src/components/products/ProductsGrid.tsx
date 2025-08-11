@@ -21,7 +21,6 @@ export default function ProductsGrid({
   error,
   currentPage,
   totalPages,
-  hasMore,
   totalProducts,
   onPageChange,
   onRetry,

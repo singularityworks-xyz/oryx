@@ -34,7 +34,7 @@ export interface ProductsState {
   totalProducts: number;
 }
 
-export interface ProductsFilters {
+export interface ProductsFiltersState {
   searchTerm: string;
   selectedCategory: string;
   selectedSort: string;
@@ -71,7 +71,7 @@ export function useProducts() {
     totalProducts: 0,
   });
 
-  const [filters, setFilters] = useState<ProductsFilters>({
+  const [filters, setFilters] = useState<ProductsFiltersState>({
     searchTerm: '',
     selectedCategory: '',
     selectedSort: 'featured',

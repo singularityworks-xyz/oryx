@@ -1,8 +1,8 @@
-import { ProductsFilters, FilterState } from '@/hooks/useProducts';
+import { ProductsFiltersState, FilterState } from '@/hooks/useProducts';
 
 interface ProductsFiltersProps {
   showFilters: boolean;
-  filters: ProductsFilters;
+  filters: ProductsFiltersState;
   categories: string[];
   onCategoryChange: (category: string) => void;
   onFilterChange: (filterType: keyof FilterState, value: boolean) => void;

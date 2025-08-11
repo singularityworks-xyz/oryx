@@ -1,250 +1,231 @@
-# Oryx - Modern E-commerce Platform
+# Rating and Comment System
 
-A fully functional e-commerce web application built with **Next.js 14**, **MongoDB**, **NextAuth.js**, **Stripe** for payments, and **Cloudinary** for image management with **production-grade image optimization**.
+A comprehensive rating and comment system for e-commerce products, built with Next.js, MongoDB, and NextAuth.
 
-## 🚀 Features
+## Overview
 
-- **Modern Tech Stack**: Next.js 14 with App Router, TypeScript, and Tailwind CSS
-- **Authentication**: NextAuth.js with Google OAuth and credentials provider
-- **Database**: MongoDB with Mongoose ODM
-- **Payment Processing**: Stripe integration for secure payments
-- **Image Management**: Cloudinary integration with advanced optimization
-- **Image Optimization**: Production-grade image loading with lazy loading, responsive images, and caching
-- **State Management**: Zustand for cart management
-- **Responsive Design**: Mobile-first design with Tailwind CSS
-- **Product Management**: Full CRUD operations for products with image uploads
-- **Admin Panel**: Complete admin interface for product management
-- **Order Management**: Complete order lifecycle with status tracking
-- **Search & Filtering**: Advanced product search and category filtering
-- **Cart System**: Persistent cart with local storage
-- **Performance**: Optimized image loading, service worker caching, and progressive enhancement
+This system allows users to rate products (1-5 stars) and leave comments, with the business rule that users can only comment after rating a product. The system includes like/dislike functionality for comments and ensures users can manage their own content.
 
-## 🖼️ Image Optimization Features
+## Key Features
 
-### Advanced Image Loading
-- **Lazy Loading**: Images load only when they enter the viewport using Intersection Observer
-- **Progressive Loading**: Smooth loading transitions with skeleton placeholders
-- **Responsive Images**: Automatic image sizing based on device and screen size
-- **Format Optimization**: Automatic WebP/AVIF conversion for modern browsers
-- **Quality Optimization**: Intelligent quality settings based on image usage
+- **Product Ratings**: 1-5 star rating system with average calculations
+- **Product Comments**: Text-based comments with like/dislike functionality
+- **User Authentication**: Secure access using NextAuth
+- **Business Rules**: Users must rate before commenting
+- **Content Management**: Users can edit and delete their own comments
+- **Like/Dislike System**: Users can like or dislike comments (mutually exclusive)
+- **Pagination**: Efficient loading of comments and ratings
+- **Real-time Updates**: Automatic recalculation of product ratings
 
-### Cloudinary Integration
-- **Automatic Transformations**: Server-side image optimization with Cloudinary
-- **Multiple Formats**: Support for WebP, AVIF, and other modern formats
-- **Responsive URLs**: Dynamic image URLs based on device requirements
-- **Eager Transformations**: Pre-generated image variants for faster loading
-- **Progressive JPEG**: Enhanced loading experience with progressive images
+## Database Models
 
-### Caching & Performance
-- **Service Worker**: Offline image caching and faster subsequent loads
-- **Browser Caching**: Optimized cache headers for images
-- **CDN Integration**: Cloudinary's global CDN for fast image delivery
-- **Preloading**: Critical images preloaded for better perceived performance
-
-### Error Handling & Fallbacks
-- **Graceful Degradation**: Fallback images when loading fails
-- **Retry Mechanism**: Automatic retry for failed image loads
-- **Placeholder Images**: Skeleton loaders and placeholder images
-- **Error Boundaries**: Comprehensive error handling for image components
-
-## 🛠️ Tech Stack
-
-- **Frontend**: Next.js 14, React 18, TypeScript, Tailwind CSS
-- **Backend**: Next.js API Routes, MongoDB, Mongoose
-- **Authentication**: NextAuth.js
-- **Payments**: Stripe
-- **Image Management**: Cloudinary with advanced optimization
-- **State Management**: Zustand
-- **Icons**: Lucide React
-- **Performance**: Service Workers, Intersection Observer, Image optimization
-- **Deployment**: Vercel (recommended)
-
-## 📋 Prerequisites
-
-- Node.js 18+ 
-- MongoDB database (local or cloud)
-- Stripe account
-- Cloudinary account
-- Google OAuth credentials (optional)
-
-## 🚀 Quick Start
-
-### 1. Clone the repository
-
-```bash
-git clone <your-repo-url>
-cd oryx
+### Rating Model
+```typescript
+interface IRating {
+  user: mongoose.Types.ObjectId;      // Reference to User
+  product: mongoose.Types.ObjectId;    // Reference to Product
+  rating: number;                      // 1-5 star rating
+  createdAt: Date;
+  updatedAt: Date;
+}
 ```
 
-### 2. Install dependencies
+**Features:**
+- Compound unique index on user + product (prevents multiple ratings)
+- Automatic product average rating updates
+- Validation for rating range (1-5)
 
-```bash
-npm install
+### Comment Model
+```typescript
+interface IComment {
+  user: mongoose.Types.ObjectId;      // Reference to User
+  product: mongoose.Types.ObjectId;    // Reference to Product
+  content: string;                     // Comment text (max 1000 chars)
+  isEdited: boolean;                   // Track edit status
+  editedAt?: Date;                     // Edit timestamp
+  likes: mongoose.Types.ObjectId[];    // Array of user IDs who liked
+  dislikes: mongoose.Types.ObjectId[]; // Array of user IDs who disliked
+  createdAt: Date;
+  updatedAt: Date;
+}
 ```
 
-### 3. Environment Setup
+**Features:**
+- Content validation and length limits
+- Edit tracking with timestamps
+- Like/dislike system (mutually exclusive)
+- Business rule enforcement (rating required before commenting)
 
-Create a `.env.local` file in the root directory:
-
-```env
-# MongoDB
-MONGODB_URI=mongodb://localhost:27017/oryx-ecommerce
-
-# NextAuth
-NEXTAUTH_URL=http://localhost:3000
-NEXTAUTH_SECRET=your-nextauth-secret-key-here
-
-# Google OAuth (Optional)
-GOOGLE_CLIENT_ID=your-google-client-id
-GOOGLE_CLIENT_SECRET=your-google-client-secret
-
-# Stripe
-STRIPE_PUBLISHABLE_KEY=pk_test_your-stripe-publishable-key
-STRIPE_SECRET_KEY=sk_test_your-stripe-secret-key
-STRIPE_WEBHOOK_SECRET=whsec_your-stripe-webhook-secret
-
-# Cloudinary
-CLOUDINARY_CLOUD_NAME=your_cloud_name
-CLOUDINARY_API_KEY=your_api_key
-CLOUDINARY_API_SECRET=your_api_secret
-
-# App Configuration
-NEXT_PUBLIC_APP_URL=http://localhost:3000
+### Updated User Model
+```typescript
+interface IUser {
+  // ... existing fields
+  ratings: mongoose.Types.ObjectId[];  // References to Rating documents
+  comments: mongoose.Types.ObjectId[]; // References to Comment documents
+}
 ```
 
-### 4. Database Setup
-
-Make sure MongoDB is running locally or update the `MONGODB_URI` to point to your cloud database.
-
-### 5. Cloudinary Setup
-
-1. Sign up for a free account at [cloudinary.com](https://cloudinary.com)
-2. Get your credentials from the dashboard
-3. Update the Cloudinary environment variables in your `.env.local` file
-
-### 6. Run the development server
-
-```bash
-npm run dev
+### Updated Product Model
+```typescript
+interface IProduct {
+  // ... existing fields
+  averageRating: number;               // Calculated average rating
+  totalRatings: number;                // Count of total ratings
+  ratings: mongoose.Types.ObjectId[];  // References to Rating documents
+  comments: mongoose.Types.ObjectId[]; // References to Comment documents
+}
 ```
 
-Open [http://localhost:3000](http://localhost:3000) to view the application.
+## API Endpoints
 
-## 🖼️ Image Optimization Usage
+### Ratings
+- `GET /api/ratings?productId={id}` - Get product ratings and statistics
+- `POST /api/ratings` - Create or update user rating
+- `DELETE /api/ratings?productId={id}` - Delete user rating
 
-### Basic Image Component
+### Comments
+- `GET /api/comments?productId={id}&page={page}&limit={limit}&sortBy={field}&sortOrder={asc|desc}` - Get product comments
+- `POST /api/comments` - Create new comment
+- `PUT /api/comments` - Update existing comment
+- `DELETE /api/comments?commentId={id}` - Delete comment
 
-```tsx
-import OptimizedImage from '@/components/OptimizedImage';
+### Comment Reactions
+- `POST /api/comments/like` - Toggle like on comment
+- `POST /api/comments/dislike` - Toggle dislike on comment
 
-<OptimizedImage
-  src="https://res.cloudinary.com/your-cloud/image/upload/product.jpg"
-  alt="Product image"
-  width={400}
-  height={400}
-  quality="auto:best"
-  responsive
-/>
+### User Data
+- `GET /api/user/ratings?page={page}&limit={limit}` - Get user's rating history
+- `GET /api/user/comments?page={page}&limit={limit}` - Get user's comment history
+- `GET /api/user/can-comment?productId={id}` - Check if user can comment
+
+## Frontend Components
+
+### RatingSystem Component
+- Displays product rating statistics
+- Interactive star rating input
+- Rating distribution chart
+- User rating management
+
+### CommentSystem Component
+- Comment list with pagination
+- Comment creation form (requires rating)
+- Like/dislike buttons for each comment
+- Edit and delete functionality for user's own comments
+- Sorting options (date, likes)
+
+## Custom Hook
+
+### useRatingsAndComments
+Provides a unified interface for all rating and comment operations:
+- `rateProduct()` - Submit product rating
+- `getProductRatings()` - Fetch rating data
+- `deleteRating()` - Remove user rating
+- `getProductComments()` - Fetch paginated comments
+- `createComment()` - Add new comment
+- `updateComment()` - Edit existing comment
+- `deleteComment()` - Remove comment
+- `toggleCommentLike()` - Like/unlike comment
+- `toggleCommentDislike()` - Dislike/undislike comment
+- `checkCanComment()` - Verify comment permission
+- `getUserRatings()` - Fetch user rating history
+- `getUserComments()` - Fetch user comment history
+
+## Business Rules
+
+1. **Rating Requirement**: Users must rate a product before commenting
+2. **Single Rating**: Users can only rate each product once
+3. **Content Ownership**: Users can only edit/delete their own comments
+4. **Mutual Exclusivity**: Users cannot like and dislike the same comment simultaneously
+5. **Content Limits**: Comments limited to 1000 characters
+
+## Security Features
+
+- **Authentication Required**: All operations require valid user session
+- **Ownership Validation**: Users can only modify their own content
+- **Input Validation**: Server-side validation of all inputs
+- **Rate Limiting**: Built-in protection against abuse
+- **XSS Prevention**: Proper content sanitization
+
+## Performance Optimizations
+
+- **Database Indexing**: Strategic indexes on frequently queried fields
+- **Pagination**: Efficient loading of large datasets
+- **Population**: Smart population of related data
+- **Caching**: Next.js built-in caching mechanisms
+- **Middleware**: Efficient pre/post-save operations
+
+## Usage Examples
+
+### Basic Rating
+```typescript
+const { rateProduct } = useRatingsAndComments();
+const result = await rateProduct('product123', 5);
 ```
 
-### Lazy Loading Image
-
-```tsx
-import LazyImage from '@/components/LazyImage';
-
-<LazyImage
-  src="https://res.cloudinary.com/your-cloud/image/upload/product.jpg"
-  alt="Product image"
-  fill
-  className="object-cover"
-  sizes="(max-width: 768px) 100vw, 50vw"
-  threshold={0.1}
-  rootMargin="50px"
-/>
+### Adding Comment
+```typescript
+const { createComment } = useRatingsAndComments();
+const comment = await createComment('product123', 'Great product!');
 ```
 
-### Product Card with Optimized Images
-
-```tsx
-import ProductCard from '@/components/ProductCard';
-
-<ProductCard
-  product={{
-    _id: "1",
-    name: "Product Name",
-    images: ["https://res.cloudinary.com/your-cloud/image/upload/product.jpg"],
-    // ... other product data
-  }}
-/>
+### Liking a Comment
+```typescript
+const { toggleCommentLike } = useRatingsAndComments();
+await toggleCommentLike('comment123');
 ```
 
-## 🔧 Image Optimization Configuration
-
-### Cloudinary Transformations
-
-The application automatically applies the following optimizations to Cloudinary images:
-
-- **Quality**: `auto:best` for optimal quality/size ratio
-- **Format**: `auto` for automatic format selection (WebP/AVIF)
-- **Sizing**: Responsive sizing based on device and container
-- **Crop**: `limit` to maintain aspect ratio
-- **Progressive**: Progressive JPEG for better loading experience
-
-### Performance Settings
-
-- **Lazy Loading**: Enabled by default with 0.1 threshold
-- **Preloading**: Critical images preloaded for better UX
-- **Caching**: 30-day cache for images via service worker
-- **CDN**: Cloudinary's global CDN for fast delivery
-
-### Responsive Image Sizes
-
-The application automatically generates responsive images for:
-
-- **Mobile**: 400px width
-- **Tablet**: 600px width  
-- **Desktop**: 800px width
-- **Large**: 1200px width
-
-## 📊 Performance Metrics
-
-With the implemented image optimization:
-
-- **Loading Speed**: 60-80% faster image loading
-- **Bandwidth**: 40-60% reduction in image file sizes
-- **User Experience**: Smooth loading with skeleton placeholders
-- **SEO**: Better Core Web Vitals scores
-- **Accessibility**: Proper alt texts and error handling
-
-## 🚀 Deployment
-
-### Vercel (Recommended)
-
-1. Push your code to GitHub
-2. Connect your repository to Vercel
-3. Add environment variables in Vercel dashboard
-4. Deploy automatically on push
-
-### Environment Variables for Production
-
-Make sure to update these in your production environment:
-
-```env
-NEXTAUTH_URL=https://your-domain.com
-NEXT_PUBLIC_APP_URL=https://your-domain.com
-CLOUDINARY_CLOUD_NAME=your_production_cloud_name
-CLOUDINARY_API_KEY=your_production_api_key
-CLOUDINARY_API_SECRET=your_production_api_secret
+### Fetching Comments
+```typescript
+const { getProductComments } = useRatingsAndComments();
+const result = await getProductComments('product123', 1, 10, 'createdAt', 'desc');
 ```
 
-## 🤝 Contributing
+## Future Enhancements
+
+- **Comment Moderation**: Admin tools for content management
+- **Rating Analytics**: Advanced rating insights and trends
+- **Notification System**: Alerts for replies and reactions
+- **Content Filtering**: Spam detection and content moderation
+- **Mobile Optimization**: Enhanced mobile user experience
+
+## Testing
+
+- **Unit Tests**: Model validation and business logic
+- **Integration Tests**: API endpoint functionality
+- **E2E Tests**: Complete user workflows
+- **Performance Tests**: Database query optimization
+
+## Deployment
+
+- **Environment Variables**: Configure MongoDB connection and NextAuth
+- **Database Setup**: Ensure proper indexes and collections
+- **Monitoring**: Track system performance and user engagement
+- **Backup**: Regular database backups and recovery procedures
+
+## Dependencies
+
+- **Next.js 14**: React framework with API routes
+- **MongoDB**: Document database with Mongoose ODM
+- **NextAuth**: Authentication and session management
+- **TypeScript**: Type-safe development
+- **Tailwind CSS**: Utility-first styling
+
+## Getting Started
+
+1. Install dependencies: `npm install`
+2. Configure environment variables
+3. Set up MongoDB database
+4. Run development server: `npm run dev`
+5. Access the application at `http://localhost:3000`
+
+## Contributing
 
 1. Fork the repository
 2. Create a feature branch
-3. Make your changes
-4. Add tests if applicable
-5. Submit a pull request
+3. Implement changes with tests
+4. Submit a pull request
+5. Ensure all tests pass
 
-## 📄 License
+## License
 
 This project is licensed under the MIT License.

@@ -20,7 +20,7 @@ function buildAggregationPipeline(params: {
   const skip = (page - 1) * limit;
 
   // Stage 1: Match stage for filtering
-  const matchStage: any = { isActive: true };
+  const matchStage: Record<string, unknown> = { isActive: true };
 
   // Category filter
   if (category && category !== 'All Categories') {
@@ -30,8 +30,8 @@ function buildAggregationPipeline(params: {
   // Price range filter
   if (minPrice !== undefined || maxPrice !== undefined) {
     matchStage.sellingPrice = {};
-    if (minPrice !== undefined) matchStage.sellingPrice.$gte = minPrice;
-    if (maxPrice !== undefined) matchStage.sellingPrice.$lte = maxPrice;
+    if (minPrice !== undefined) (matchStage.sellingPrice as Record<string, number>).$gte = minPrice;
+    if (maxPrice !== undefined) (matchStage.sellingPrice as Record<string, number>).$lte = maxPrice;
   }
 
   // Stock filter
@@ -67,7 +67,7 @@ function buildAggregationPipeline(params: {
   }
 
   // Stage 2: Add computed fields for sorting
-  const addFieldsStage: any = {
+  const addFieldsStage: Record<string, unknown> = {
     // Calculate discount percentage for sorting
     discountPercentage: {
       $cond: {
@@ -87,7 +87,7 @@ function buildAggregationPipeline(params: {
   };
 
   // Stage 3: Sort stage
-  let sortStage: any = {};
+  let sortStage: Record<string, 1 | -1> = {};
   switch (sort) {
     case 'newest':
       sortStage = { createdAt: -1 };
@@ -417,7 +417,7 @@ export async function POST(request: NextRequest) {
   }
 }
 
-export async function HEAD(request: NextRequest) {
+export async function HEAD() {
   try {
     console.log('Products API HEAD: Testing database connection...');
     const healthy = await isHealthy();

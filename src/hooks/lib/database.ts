@@ -32,7 +32,7 @@ interface ConnectionState {
   lastConnectionAttempt: number;
 }
 
-let connectionState: ConnectionState = {
+const connectionState: ConnectionState = {
   connection: null,
   isConnecting: false,
   lastConnectionAttempt: 0,

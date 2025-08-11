@@ -1,8 +1,8 @@
 import { Search, Filter, ChevronDown, X } from 'lucide-react';
-import { ProductsFilters, FilterState } from '@/hooks/useProducts';
+import { ProductsFiltersState, FilterState } from '@/hooks/useProducts';
 
 interface ProductsSearchProps {
-  filters: ProductsFilters;
+  filters: ProductsFiltersState;
   filtering: boolean;
   showFilters: boolean;
   categories: string[];
@@ -12,9 +12,9 @@ interface ProductsSearchProps {
   onCategoryChange: (category: string) => void;
   onSortChange: (sort: string) => void;
   onFilterChange: (filterType: keyof FilterState, value: boolean) => void;
-  onClearFilters: () => void;
-  onToggleFilters: () => void;
   onPriceRangeChange: (range: [number, number]) => void;
+  onToggleFilters: () => void;
+  onClearFilters: () => void;
 }
 
 export default function ProductsSearch({
@@ -132,7 +132,7 @@ export default function ProductsSearch({
             <span className="text-sm font-outfit font-light text-gray-600">Active filters:</span>
             {filters.searchTerm && (
               <span className="inline-flex items-center gap-2 px-3 py-1 bg-gray-100 text-gray-700 text-sm font-outfit font-light">
-                Search: "{filters.searchTerm}"
+                Search: &ldquo;{filters.searchTerm}&rdquo;
                 <button 
                   onClick={() => onSearchTermChange('')} 
                   className="hover:text-gray-900"

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
+import { getServerSession } from 'next-auth/next';
 import { connect } from '@/hooks/lib/database';
 import { authOptions } from '@/hooks/lib/auth';
 import Product from '@/models/Product';

@@ -6,6 +6,8 @@ export interface IUser extends Document {
   password?: string;
   image?: string;
   role: 'user' | 'admin';
+  ratings: mongoose.Types.ObjectId[];
+  comments: mongoose.Types.ObjectId[];
   createdAt: Date;
   updatedAt: Date;
 }
@@ -37,6 +39,14 @@ const UserSchema: Schema = new Schema({
     enum: ['user', 'admin'],
     default: 'user',
   },
+  ratings: [{
+    type: Schema.Types.ObjectId,
+    ref: 'Rating',
+  }],
+  comments: [{
+    type: Schema.Types.ObjectId,
+    ref: 'Comment',
+  }],
 }, {
   timestamps: true,
 });
