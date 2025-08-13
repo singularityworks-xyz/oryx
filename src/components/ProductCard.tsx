@@ -2,7 +2,7 @@
 
 import LazyImage from './LazyImage';
 import Link from 'next/link';
-import { useCartStore } from '@/store/cart';
+import { useAuthenticatedCart } from '@/hooks/useAuthenticatedCart';
 import { ShoppingCart, Star } from 'lucide-react';
 
 interface ProductCardProps {
@@ -25,7 +25,7 @@ interface ProductCardProps {
 }
 
 export default function ProductCard({ product }: ProductCardProps) {
-  const { addItem } = useCartStore();
+  const { addItem, isAuthenticated } = useAuthenticatedCart();
   
   // Use sellingPrice if available, otherwise fall back to price
   const displayPrice = product.sellingPrice || product.price || 0;
@@ -33,8 +33,8 @@ export default function ProductCard({ product }: ProductCardProps) {
   const discount = product.discount || 0;
   const discountPercentage = originalPrice > 0 ? Math.round((discount / originalPrice) * 100) : 0;
 
-  const handleAddToCart = () => {
-    addItem({
+  const handleAddToCart = async () => {
+    await addItem({
       id: product._id,
       name: product.name,
       price: displayPrice,

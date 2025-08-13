@@ -4,18 +4,16 @@ import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useSession, signOut } from 'next-auth/react';
-import { useCartStore } from '@/store/cart';
+import { useAuthenticatedCart } from '@/hooks/useAuthenticatedCart';
 import { ShoppingCart, User, Search, Settings, LogOut, Heart, Package, Shield } from 'lucide-react';
 import { Session } from 'next-auth';
 
 export default function Navbar() {
   const { data: session } = useSession();
-  const { getItemCount } = useCartStore();
+  const { itemCount } = useAuthenticatedCart();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
   const profileDropdownRef = useRef<HTMLDivElement>(null);
-
-  const itemCount = getItemCount();
 
   // Type assertion for session
   const typedSession = session as Session | null;

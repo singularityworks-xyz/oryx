@@ -5,6 +5,17 @@ export interface IUser extends Document {
   email: string;
   password?: string;
   image?: string;
+  phone?: string;
+  address?: {
+    fullName: string;
+    mobileNumber: string;
+    buildingNumber: string;
+    streetName: string;
+    zoneNumber: string;
+    area: string;
+    city: string;
+    poBox?: string;
+  };
   role: 'user' | 'admin';
   ratings: mongoose.Types.ObjectId[];
   comments: mongoose.Types.ObjectId[];
@@ -33,6 +44,46 @@ const UserSchema: Schema = new Schema({
   image: {
     type: String,
     required: false,
+  },
+  phone: {
+    type: String,
+    required: false,
+    match: [/^[\+]?[1-9][\d]{0,15}$/, 'Please provide a valid phone number'],
+  },
+  address: {
+    fullName: {
+      type: String,
+      required: false,
+    },
+    mobileNumber: {
+      type: String,
+      required: false,
+      match: [/^[\+]?[1-9][\d]{0,15}$/, 'Please provide a valid mobile number'],
+    },
+    buildingNumber: {
+      type: String,
+      required: false,
+    },
+    streetName: {
+      type: String,
+      required: false,
+    },
+    zoneNumber: {
+      type: String,
+      required: false,
+    },
+    area: {
+      type: String,
+      required: false,
+    },
+    city: {
+      type: String,
+      required: false,
+    },
+    poBox: {
+      type: String,
+      required: false,
+    },
   },
   role: {
     type: String,

@@ -80,6 +80,12 @@ const ProductSchema: Schema = new Schema({
     type: String,
     trim: true,
   }],
+  sku: {
+    type: String,
+    required: [true, 'Please provide a SKU'],
+    unique: true,
+    trim: true,
+  },
   images: [{
     type: String,
     required: [true, 'Please provide at least one image'],

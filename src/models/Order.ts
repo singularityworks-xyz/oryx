@@ -18,11 +18,14 @@ export interface IOrder extends Document {
   paymentMethod: string;
   paymentIntentId?: string;
   shippingAddress: {
-    street: string;
+    fullName: string;
+    mobileNumber: string;
+    buildingNumber: string;
+    streetName: string;
+    zoneNumber: string;
+    area: string;
     city: string;
-    state: string;
-    zipCode: string;
-    country: string;
+    poBox?: string;
   };
   createdAt: Date;
   updatedAt: Date;
@@ -89,7 +92,27 @@ const OrderSchema: Schema = new Schema({
     required: false,
   },
   shippingAddress: {
-    street: {
+    fullName: {
+      type: String,
+      required: true,
+    },
+    mobileNumber: {
+      type: String,
+      required: true,
+    },
+    buildingNumber: {
+      type: String,
+      required: true,
+    },
+    streetName: {
+      type: String,
+      required: true,
+    },
+    zoneNumber: {
+      type: String,
+      required: true,
+    },
+    area: {
       type: String,
       required: true,
     },
@@ -97,17 +120,9 @@ const OrderSchema: Schema = new Schema({
       type: String,
       required: true,
     },
-    state: {
+    poBox: {
       type: String,
-      required: true,
-    },
-    zipCode: {
-      type: String,
-      required: true,
-    },
-    country: {
-      type: String,
-      required: true,
+      required: false,
     },
   },
 }, {

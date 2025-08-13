@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { connect, isHealthy } from '@/hooks/lib/database';
 import Product from '@/models/Product';
+import { ObjectId } from 'mongodb';
 
 // Build MongoDB aggregation pipeline for efficient filtering and sorting
 function buildAggregationPipeline(params: {
@@ -15,12 +16,25 @@ function buildAggregationPipeline(params: {
   inStockOnly?: boolean;
   onSale?: boolean;
   trending?: boolean;
+  exclude?: string;
 }) {
   const { category, search, tags, minPrice, maxPrice, sort, page, limit, inStockOnly, onSale, trending } = params;
   const skip = (page - 1) * limit;
 
   // Stage 1: Match stage for filtering
   const matchStage: Record<string, unknown> = { isActive: true };
+
+  // Exclude specific product
+  if (params.exclude) {
+    try {
+      // Convert string ID to ObjectId for proper comparison
+      const excludeId = new ObjectId(params.exclude);
+      matchStage._id = { $ne: excludeId };
+    } catch {
+      // If invalid ObjectId, skip exclusion
+      console.warn('Invalid ObjectId for exclusion:', params.exclude);
+    }
+  }
 
   // Category filter
   if (category && category !== 'All Categories') {
@@ -211,9 +225,10 @@ export async function GET(request: NextRequest) {
     const inStockOnly = searchParams.get('inStockOnly') === 'true';
     const onSale = searchParams.get('onSale') === 'true';
     const trending = searchParams.get('trending') === 'true';
+    const exclude = searchParams.get('exclude') || undefined;
 
     console.log('Products API: Query parameters:', { 
-      category, search, tags, minPrice, maxPrice, sort, page, limit, inStockOnly, onSale, trending 
+      category, search, tags, minPrice, maxPrice, sort, page, limit, inStockOnly, onSale, trending, exclude 
     });
 
     // Build aggregation pipeline
@@ -228,8 +243,11 @@ export async function GET(request: NextRequest) {
       limit,
       inStockOnly,
       onSale,
-      trending
+      trending,
+      exclude
     });
+
+    console.log('Products API: Built pipeline match stage:', JSON.stringify(pipeline[0], null, 2));
 
     console.log('Products API: Executing aggregation pipeline');
 
