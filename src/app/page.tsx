@@ -180,14 +180,14 @@ export default async function Home() {
       </section>
 
       {/* Second Section - SHOP */}
-      <section className="py-12 sm:py-16 md:py-20 lg:py-24 xl:py-32 bg-gradient-to-b from-white to-gray-50/30">
+      <section className="py-12 sm:py-16 md:py-20 lg:py-24 xl:py-32 bg-white">
         <div className="max-w-[1400px] mx-auto px-4 sm:px-6 md:px-8 lg:px-10 xl:px-12">
           {/* Section Header */}
           <div className="text-center mb-12 sm:mb-16 md:mb-20 lg:mb-24">
             <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-playfair font-light text-gray-900 mb-6 sm:mb-8 tracking-wide">
               CURATED COLLECTION
             </h2>
-            <div className="w-20 sm:w-24 md:w-28 lg:w-32 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent mx-auto"></div>
+            <div className="w-20 sm:w-24 md:w-28 lg:w-32 h-px bg-gray-300 mx-auto"></div>
             <p className="text-sm sm:text-base md:text-lg text-gray-600 mt-6 sm:mt-8 max-w-xs sm:max-w-sm md:max-w-xl lg:max-w-2xl mx-auto font-outfit font-light leading-relaxed px-4 sm:px-0">
               Discover our handpicked selection of premium kitchen essentials, each piece crafted with attention to detail and timeless elegance.
             </p>

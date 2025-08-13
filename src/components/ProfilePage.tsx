@@ -320,13 +320,13 @@ export default function ProfilePage() {
 
   if (!session?.user) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-white to-gray-50/30 flex items-center justify-center">
+      <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center">
           <div className="w-24 h-24 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-6">
             <User className="w-12 h-12 text-gray-400" />
           </div>
           <h2 className="text-3xl font-playfair font-light text-gray-900 mb-4">Profile Access</h2>
-          <div className="w-20 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent mx-auto mb-6"></div>
+          <div className="w-20 h-px bg-gray-300 mx-auto mb-6"></div>
           <p className="text-gray-600 mb-8 max-w-md mx-auto font-outfit font-light">
             Please sign in to view your profile and manage your account.
           </p>
@@ -405,7 +405,7 @@ export default function ProfilePage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50/30">
+    <div className="min-h-screen bg-white">
       <ProfileHeader />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">

@@ -37,7 +37,7 @@ export default function OverviewTab({
     <div className="space-y-6">
       {/* Quick Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-white rounded-xl border border-gray-200 p-6 hover:shadow-md transition-all duration-300">
+        <div className="bg-white rounded-xl border border-gray-300 p-6 hover:shadow-md transition-all duration-300">
           <div className="flex items-center space-x-4">
             <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
               <ShoppingBag className="w-6 h-6 text-blue-600" />
@@ -49,7 +49,7 @@ export default function OverviewTab({
           </div>
         </div>
         
-        <div className="bg-white rounded-xl border border-gray-200 p-6 hover:shadow-md transition-all duration-300">
+        <div className="bg-white rounded-xl border border-gray-300 p-6 hover:shadow-md transition-all duration-300">
           <div className="flex items-center space-x-4">
             <div className="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
               <Star className="w-6 h-6 text-yellow-600" />
@@ -61,7 +61,7 @@ export default function OverviewTab({
           </div>
         </div>
         
-        <div className="bg-white rounded-xl border border-gray-200 p-6 hover:shadow-md transition-all duration-300">
+        <div className="bg-white rounded-xl border border-gray-300 p-6 hover:shadow-md transition-all duration-300">
           <div className="flex items-center space-x-4">
             <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
               <MessageCircle className="w-6 h-6 text-green-600" />
@@ -75,7 +75,7 @@ export default function OverviewTab({
       </div>
 
       {/* Recent Orders */}
-      <div className="bg-white rounded-xl border border-gray-200">
+      <div className="bg-white rounded-xl border border-gray-300">
         <div className="px-6 py-4 border-b border-gray-100">
           <h3 className="text-lg font-playfair font-light text-gray-900">Recent Orders</h3>
         </div>
@@ -131,7 +131,7 @@ export default function OverviewTab({
       </div>
 
       {/* Quick Actions */}
-      <div className="bg-white rounded-xl border border-gray-200 p-6">
+      <div className="bg-white rounded-xl border border-gray-300 p-6">
         <h3 className="text-lg font-playfair font-light text-gray-900 mb-4">Quick Actions</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <Link

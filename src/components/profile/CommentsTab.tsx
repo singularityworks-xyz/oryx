@@ -35,7 +35,7 @@ export default function CommentsTab({
   formatDate
 }: CommentsTabProps) {
   return (
-    <div className="bg-white rounded-xl border border-gray-200">
+    <div className="bg-white rounded-xl border border-gray-300">
       <div className="px-6 py-4 border-b border-gray-100">
         <h3 className="text-lg font-playfair font-light text-gray-900">Comments You&apos;ve Made</h3>
       </div>

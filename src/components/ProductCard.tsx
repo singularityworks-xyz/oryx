@@ -45,7 +45,7 @@ export default function ProductCard({ product }: ProductCardProps) {
   return (
     <div className="group bg-white overflow-hidden hover:shadow-2xl transition-all duration-700 border border-gray-100 hover:border-gray-200 flex flex-col h-full relative">
       {/* Subtle background pattern */}
-      <div className="absolute inset-0 bg-gradient-to-br from-gray-50/50 to-white opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
+      <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
       
       {/* Image Container */}
       <div className="relative h-48 sm:h-64 md:h-72 lg:h-80 w-full overflow-hidden bg-gray-50 flex-shrink-0">

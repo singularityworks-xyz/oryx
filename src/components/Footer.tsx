@@ -6,7 +6,7 @@ export default function Footer() {
   return (
     <footer className="bg-white border-t border-gray-100">
       {/* Upper Separator Border */}
-      <div className="w-full h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent"></div>
+      <div className="w-full h-px bg-gray-200"></div>
       {/* Main Footer Content */}
       <div className="max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 md:py-20 lg:py-24 xl:py-32">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-10 md:gap-12 lg:gap-16">

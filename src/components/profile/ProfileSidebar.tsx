@@ -30,7 +30,7 @@ export default function ProfileSidebar({
 }: ProfileSidebarProps) {
   return (
     <div className="lg:w-80 flex-shrink-0">
-      <div className="bg-white rounded-xl border border-gray-200 p-6 sticky top-8">
+      <div className="bg-white rounded-xl border border-gray-300 p-6 sticky top-8 ">
         {/* User Info Card */}
         <div className="text-center mb-8 pb-6 border-b border-gray-100">
           <div className="mb-4">
@@ -43,7 +43,7 @@ export default function ProfileSidebar({
                 className="rounded-full border-4 border-gray-100 shadow-sm mx-auto"
               />
             ) : (
-              <div className="w-20 h-20 bg-gradient-to-br from-gray-200 to-gray-300 rounded-full flex items-center justify-center border-4 border-gray-100 shadow-sm mx-auto">
+              <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center border-4 border-gray-100 shadow-sm mx-auto">
                 <span className="text-gray-600 text-2xl font-bold font-outfit">
                   {(user.name || 'U').charAt(0).toUpperCase()}
                 </span>

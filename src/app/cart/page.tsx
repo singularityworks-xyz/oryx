@@ -61,12 +61,12 @@ export default function CartPage() {
   // Redirect to sign in if not authenticated
   if (!isAuthenticated) {
     return (
-      <div className="min-h-[60vh] flex items-center justify-center bg-gradient-to-b from-white to-gray-50/30">
+      <div className="min-h-[60vh] flex items-center justify-center bg-white">
         <div className="text-center max-w-md mx-auto px-6">
           <div className="mb-8">
-            <div className="w-20 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent mx-auto mb-6"></div>
+            <div className="w-20 h-px bg-gray-300 mx-auto mb-6"></div>
             <ShoppingBag className="mx-auto h-16 w-16 text-gray-300" />
-            <div className="w-20 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent mx-auto mt-6"></div>
+            <div className="w-20 h-px bg-gray-300 mx-auto mt-6"></div>
           </div>
           <h2 className="text-2xl font-light text-gray-900 mb-4">Sign in to view your cart</h2>
           <p className="text-gray-600 font-light leading-relaxed mb-8">
@@ -93,12 +93,12 @@ export default function CartPage() {
 
   if (itemCount === 0) {
     return (
-      <div className="min-h-[60vh] flex items-center justify-center bg-gradient-to-b from-white to-gray-50/30">
+              <div className="min-h-[60vh] flex items-center justify-center bg-white">
         <div className="text-center max-w-md mx-auto px-6">
           <div className="mb-8">
-            <div className="w-20 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent mx-auto mb-6"></div>
+            <div className="w-20 h-px bg-gray-300 mx-auto mb-6"></div>
             <ShoppingBag className="mx-auto h-16 w-16 text-gray-300" />
-            <div className="w-20 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent mx-auto mt-6"></div>
+            <div className="w-20 h-px bg-gray-300 mx-auto mt-6"></div>
           </div>
           <h2 className="text-2xl font-light text-gray-900 mb-4">Your cart is empty</h2>
           <p className="text-gray-600 font-light leading-relaxed mb-8">
@@ -116,7 +116,7 @@ export default function CartPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-gray-50/30">
+    <div className="min-h-screen bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
         {/* Header Section */}
         <div className="mb-12 lg:mb-16">

@@ -473,13 +473,13 @@ export default function ProductDetailPage() {
       </div>
 
       {/* Ratings Section */}
-      <section className="py-16 lg:py-24 bg-gradient-to-b from-white to-gray-50/30">
+      <section className="py-16 lg:py-24 bg-white">
         <div className="max-w-[1400px] mx-auto px-4 sm:px-6 md:px-8 lg:px-10 xl:px-12">
           <div className="text-center mb-16 lg:mb-20">
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-playfair font-light text-gray-900 mb-6 tracking-wide">
               CUSTOMER RATINGS
             </h2>
-            <div className="w-20 sm:w-24 md:w-28 lg:w-32 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent mx-auto"></div>
+            <div className="w-20 sm:w-24 md:w-28 lg:w-32 h-px bg-gray-300 mx-auto"></div>
             <p className="text-base md:text-lg text-gray-600 mt-6 max-w-2xl mx-auto font-outfit font-light leading-relaxed">
               See what our customers think about this product
             </p>
@@ -502,7 +502,7 @@ export default function ProductDetailPage() {
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-playfair font-light text-gray-900 mb-6 tracking-wide">
               CUSTOMER COMMENTS
             </h2>
-            <div className="w-20 sm:w-24 md:w-28 lg:w-32 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent mx-auto"></div>
+            <div className="w-20 sm:w-24 md:w-28 lg:w-32 h-px bg-gray-300 mx-auto"></div>
             <p className="text-base md:text-lg text-gray-600 mt-6 max-w-2xl mx-auto font-outfit font-light leading-relaxed">
               Share your thoughts and read what others have to say
             </p>
@@ -515,13 +515,13 @@ export default function ProductDetailPage() {
       </section>
 
       {/* You May Also Like Section */}
-      <section className="py-16 lg:py-24 bg-gradient-to-b from-white to-gray-50/30">
+      <section className="py-16 lg:py-24 bg-white">
         <div className="max-w-[1400px] mx-auto px-4 sm:px-6 md:px-8 lg:px-10 xl:px-12">
           <div className="text-center mb-16 lg:mb-20">
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-playfair font-light text-gray-900 mb-6 tracking-wide">
               YOU MAY ALSO LIKE
             </h2>
-            <div className="w-20 sm:w-24 md:w-28 lg:w-32 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent mx-auto"></div>
+            <div className="w-20 sm:w-24 md:w-28 lg:w-32 h-px bg-gray-300 mx-auto"></div>
             <p className="text-base md:text-lg text-gray-600 mt-6 max-w-2xl mx-auto font-outfit font-light leading-relaxed">
               Discover more premium kitchen essentials from our curated collection
             </p>
