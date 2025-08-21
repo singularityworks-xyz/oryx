@@ -1,39 +1,32 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import { Outfit, Playfair_Display } from "next/font/google";
-import "./globals.css";
-import Providers from "@/components/Providers";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
-import ServiceWorkerRegistration from "@/components/ServiceWorkerRegistration";
-import PerformanceMonitor from "@/components/PerformanceMonitor";
+import type { Metadata } from 'next';
+import { Geist, Geist_Mono, Outfit, Playfair_Display } from 'next/font/google';
+import './globals.css';
+import Footer from '@/components/footer';
+import Navbar from '@/components/navbar';
 
 const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
+  variable: '--font-geist-sans',
+  subsets: ['latin'],
 });
 
 const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+  variable: '--font-geist-mono',
+  subsets: ['latin'],
 });
 
 const outfit = Outfit({
-  variable: "--font-outfit",
-  subsets: ["latin"],
+  variable: '--font-outfit',
+  subsets: ['latin'],
 });
 
 const playfairDisplay = Playfair_Display({
-  variable: "--font-playfair",
-  subsets: ["latin"],
+  variable: '--font-playfair',
+  subsets: ['latin'],
 });
 
 export const metadata: Metadata = {
-  title: "Oryx - Modern E-commerce",
-  description: "A modern e-commerce platform built with Next.js",
-  other: {
-    "theme-color": "#000000",
-  },
+  title: 'Oryx - Hotel Supplies',
+  description: 'Qatar’s trusted partner in premium hotel supplies',
 };
 
 export default function RootLayout({
@@ -42,26 +35,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <head>
-        <link rel="preconnect" href="https://res.cloudinary.com" />
-        <link rel="dns-prefetch" href="https://res.cloudinary.com" />
-      </head>
+    <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${outfit.variable} ${playfairDisplay.variable} antialiased bg-gray-50`}
-        suppressHydrationWarning
+        className={`${geistSans.variable} ${geistMono.variable} ${outfit.variable} ${playfairDisplay.variable} bg-gray-50 antialiased`}
       >
-        <Providers>
-          <div className="min-h-screen flex flex-col">
-            <Navbar />
-            <main className="flex-1">
-              {children}
-            </main>
-            <Footer />
-          </div>
-        </Providers>
-        <ServiceWorkerRegistration />
-        <PerformanceMonitor />
+        <div className="flex min-h-screen flex-col">
+          <Navbar />
+          <main className="flex-1">{children}</main>
+          <Footer />
+        </div>
       </body>
     </html>
   );
