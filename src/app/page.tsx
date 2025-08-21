@@ -81,7 +81,7 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="flex hidden h-32 items-center justify-center overflow-hidden sm:h-40 lg:flex lg:h-1/2">
+            <div className="flex h-32 items-center justify-center overflow-hidden sm:h-40 lg:flex lg:h-1/2">
               <div className="flex h-full w-full justify-between px-4 sm:px-6 lg:px-0">
                 <Image
                   alt="Fork"

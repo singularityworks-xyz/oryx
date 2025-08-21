@@ -7,13 +7,16 @@ import { mockProducts } from '@/data/mock-data';
 const PERCENTAGE_MULTIPLIER = 100;
 
 type ProductDetailPageProps = {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 };
 
-export default function ProductDetailPage({ params }: ProductDetailPageProps) {
-  const product = mockProducts.find((p) => p._id === params.id);
+export default async function ProductDetailPage({
+  params,
+}: ProductDetailPageProps) {
+  const resolvedParams = await params;
+  const product = mockProducts.find((p) => p._id === resolvedParams.id);
 
   if (!product) {
     notFound();
