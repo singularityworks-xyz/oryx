@@ -36,6 +36,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <script defer src="https://tracking.zephyyrr.in/script.js" data-website-id="8ea5396e-6ac6-4ede-a92d-d0b476d9bf3b"></script>
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${outfit.variable} ${playfairDisplay.variable} bg-gray-50 antialiased`}
       >
