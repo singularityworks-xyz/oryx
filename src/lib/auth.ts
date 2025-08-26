@@ -8,6 +8,10 @@ import { logger } from './logger';
 import * as schema from './schema';
 
 export const auth = betterAuth({
+  rateLimit: {
+    window: 60,
+    max: 100,
+  },
   database: drizzleAdapter(db, {
     provider: 'pg',
     schema: {
@@ -19,6 +23,9 @@ export const auth = betterAuth({
   }),
   emailAndPassword: {
     enabled: true,
+  },
+  advanced: {
+    cookiePrefix: 'oryx',
   },
   plugins: [nextCookies()],
   secret: env.BETTER_AUTH_SECRET,

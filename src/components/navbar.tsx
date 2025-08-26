@@ -46,12 +46,12 @@ export default function Navbar() {
             >
               about
             </Link>
-            <button
+            <Link
               className="px-3 py-2 font-light text-5 text-gray-700 hover:text-gray-900"
-              type="button"
+              href="/search"
             >
               <Search className="h-5 w-5" />
-            </button>
+            </Link>
           </div>
 
           <div className="hidden items-center space-x-4 md:flex">
@@ -135,13 +135,14 @@ export default function Navbar() {
             >
               About
             </Link>
-            <button
+            <Link
               className="block w-full items-center px-3 py-2 text-left font-light text-base text-gray-700 hover:text-gray-900"
-              type="button"
+              href="/search"
+              onClick={() => setIsMenuOpen(false)}
             >
               <Search className="mr-2 h-5 w-5" />
               Search
-            </button>
+            </Link>
 
             {session && (
               <Link
