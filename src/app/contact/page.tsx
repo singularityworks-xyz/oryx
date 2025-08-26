@@ -1,4 +1,4 @@
-import { Mail, Phone, MapPin, Clock } from 'lucide-react';
+import { Clock, Mail, MapPin, Phone } from 'lucide-react';
 
 export default function ContactPage() {
   return (
@@ -11,8 +11,8 @@ export default function ContactPage() {
             </h1>
             <div className="mx-auto h-px w-20 bg-gray-300 sm:w-24 md:w-28 lg:w-32" />
             <p className="mx-auto mt-6 max-w-xs px-4 font-light font-outfit text-gray-600 text-sm leading-relaxed sm:mt-8 sm:max-w-sm sm:px-0 sm:text-base md:max-w-xl md:text-lg lg:max-w-2xl">
-              We'd love to hear from you. Reach out to discuss your culinary needs
-              or inquire about our premium kitchen essentials.
+              We'd love to hear from you. Reach out to discuss your culinary
+              needs or inquire about our premium kitchen essentials.
             </p>
           </div>
 
@@ -63,7 +63,8 @@ export default function ContactPage() {
                       Address
                     </p>
                     <p className="font-light font-outfit text-gray-600 text-sm sm:text-base">
-                      123 Culinary District<br />
+                      123 Culinary District
+                      <br />
                       Gourmet City, GC 12345
                     </p>
                   </div>
@@ -78,8 +79,10 @@ export default function ContactPage() {
                       Business Hours
                     </p>
                     <p className="font-light font-outfit text-gray-600 text-sm sm:text-base">
-                      Monday - Friday: 9:00 AM - 6:00 PM<br />
-                      Saturday: 10:00 AM - 4:00 PM<br />
+                      Monday - Friday: 9:00 AM - 6:00 PM
+                      <br />
+                      Saturday: 10:00 AM - 4:00 PM
+                      <br />
                       Sunday: Closed
                     </p>
                   </div>
@@ -107,8 +110,8 @@ export default function ContactPage() {
                     <input
                       className="w-full border border-gray-200 bg-white px-4 py-3 font-light font-outfit text-gray-900 text-sm placeholder-gray-400 transition-all duration-300 focus:border-gray-900 focus:ring-0"
                       id="firstName"
-                      type="text"
                       placeholder="Enter your first name"
+                      type="text"
                     />
                   </div>
                   <div>
@@ -121,8 +124,8 @@ export default function ContactPage() {
                     <input
                       className="w-full border border-gray-200 bg-white px-4 py-3 font-light font-outfit text-gray-900 text-sm placeholder-gray-400 transition-all duration-300 focus:border-gray-900 focus:ring-0"
                       id="lastName"
-                      type="text"
                       placeholder="Enter your last name"
+                      type="text"
                     />
                   </div>
                 </div>
@@ -137,8 +140,8 @@ export default function ContactPage() {
                   <input
                     className="w-full border border-gray-200 bg-white px-4 py-3 font-light font-outfit text-gray-900 text-sm placeholder-gray-400 transition-all duration-300 focus:border-gray-900 focus:ring-0"
                     id="email"
-                    type="email"
                     placeholder="Enter your email address"
+                    type="email"
                   />
                 </div>
 
@@ -172,8 +175,8 @@ export default function ContactPage() {
                   <textarea
                     className="w-full border border-gray-200 bg-white px-4 py-3 font-light font-outfit text-gray-900 text-sm placeholder-gray-400 transition-all duration-300 focus:border-gray-900 focus:ring-0"
                     id="message"
-                    rows={6}
                     placeholder="Tell us how we can help you..."
+                    rows={6}
                   />
                 </div>
 

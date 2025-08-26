@@ -1,4 +1,4 @@
-import { Heart, Award, Users, ChefHat } from 'lucide-react';
+import { Award, ChefHat, Heart, Users } from 'lucide-react';
 
 export default function AboutPage() {
   return (
@@ -27,20 +27,22 @@ export default function AboutPage() {
 
               <div className="space-y-6 font-light font-outfit text-gray-600 leading-relaxed">
                 <p className="text-sm sm:text-base">
-                  Founded with a vision to transform everyday dining experiences,
-                  Oryx was born from a deep appreciation for the artistry of cooking
-                  and the importance of quality kitchenware.
+                  Founded with a vision to transform everyday dining
+                  experiences, Oryx was born from a deep appreciation for the
+                  artistry of cooking and the importance of quality kitchenware.
                 </p>
                 <p className="text-sm sm:text-base">
-                  We believe that every meal deserves to be prepared and served with
-                  elegance. Our carefully curated collection brings together timeless
-                  design and exceptional craftsmanship, ensuring that every piece tells
-                  a story of sophistication and functionality.
+                  We believe that every meal deserves to be prepared and served
+                  with elegance. Our carefully curated collection brings
+                  together timeless design and exceptional craftsmanship,
+                  ensuring that every piece tells a story of sophistication and
+                  functionality.
                 </p>
                 <p className="text-sm sm:text-base">
-                  From our premium dinnerware to our handpicked utensils, each item
-                  is selected with the discerning palate in mind. We partner with
-                  artisans who share our commitment to excellence and sustainability.
+                  From our premium dinnerware to our handpicked utensils, each
+                  item is selected with the discerning palate in mind. We
+                  partner with artisans who share our commitment to excellence
+                  and sustainability.
                 </p>
               </div>
             </div>
@@ -59,11 +61,12 @@ export default function AboutPage() {
                     <Heart className="h-6 w-6 text-gray-900" />
                   </div>
                   <div>
-                    <h3 className="font-light font-outfit text-gray-900 text-base mb-2">
+                    <h3 className="mb-2 font-light font-outfit text-base text-gray-900">
                       Passion for Excellence
                     </h3>
                     <p className="font-light font-outfit text-gray-600 text-sm leading-relaxed">
-                      Every piece is chosen with uncompromising attention to quality and design.
+                      Every piece is chosen with uncompromising attention to
+                      quality and design.
                     </p>
                   </div>
                 </div>
@@ -73,7 +76,7 @@ export default function AboutPage() {
                     <Award className="h-6 w-6 text-gray-900" />
                   </div>
                   <div>
-                    <h3 className="font-light font-outfit text-gray-900 text-base mb-2">
+                    <h3 className="mb-2 font-light font-outfit text-base text-gray-900">
                       Timeless Design
                     </h3>
                     <p className="font-light font-outfit text-gray-600 text-sm leading-relaxed">
@@ -87,11 +90,12 @@ export default function AboutPage() {
                     <Users className="h-6 w-6 text-gray-900" />
                   </div>
                   <div>
-                    <h3 className="font-light font-outfit text-gray-900 text-base mb-2">
+                    <h3 className="mb-2 font-light font-outfit text-base text-gray-900">
                       Community Focus
                     </h3>
                     <p className="font-light font-outfit text-gray-600 text-sm leading-relaxed">
-                      Building connections between chefs, artisans, and food lovers.
+                      Building connections between chefs, artisans, and food
+                      lovers.
                     </p>
                   </div>
                 </div>
@@ -101,7 +105,7 @@ export default function AboutPage() {
                     <ChefHat className="h-6 w-6 text-gray-900" />
                   </div>
                   <div>
-                    <h3 className="font-light font-outfit text-gray-900 text-base mb-2">
+                    <h3 className="mb-2 font-light font-outfit text-base text-gray-900">
                       Culinary Craftsmanship
                     </h3>
                     <p className="font-light font-outfit text-gray-600 text-sm leading-relaxed">
@@ -168,11 +172,12 @@ export default function AboutPage() {
               OUR MISSION
             </h2>
             <div className="mx-auto h-px w-20 bg-gray-300 sm:w-24 md:w-28 lg:w-32" />
-            <p className="mx-auto mt-6 max-w-2xl font-light font-outfit text-gray-600 text-base leading-relaxed sm:mt-8 sm:text-lg md:text-xl">
-              To elevate everyday dining experiences by connecting discerning customers
-              with exceptional kitchenware that combines timeless beauty with
-              uncompromising quality. We strive to make culinary artistry accessible
-              to everyone who appreciates the finer things in life.
+            <p className="mx-auto mt-6 max-w-2xl font-light font-outfit text-base text-gray-600 leading-relaxed sm:mt-8 sm:text-lg md:text-xl">
+              To elevate everyday dining experiences by connecting discerning
+              customers with exceptional kitchenware that combines timeless
+              beauty with uncompromising quality. We strive to make culinary
+              artistry accessible to everyone who appreciates the finer things
+              in life.
             </p>
           </div>
         </div>

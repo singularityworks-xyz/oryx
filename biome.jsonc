@@ -2,6 +2,12 @@
   "$schema": "https://biomejs.dev/schemas/2.2.0/schema.json",
   "extends": ["ultracite"],
   "files": {
-    "includes": ["!globals.css"]
+    "includes": [
+      "**",
+      "!globals.css",
+      "node_modules/**",
+      "!.vscode",
+      "!src/app/globals.css"
+    ]
   }
 }
