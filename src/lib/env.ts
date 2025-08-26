@@ -38,14 +38,19 @@ export const env = createEnv({
       .optional(),
     LOG_SERVICE_URL: z.url().optional(),
     LOG_SERVICE_API_KEY: z.string().optional(),
+    GOOGLE_CLIENT_ID: z.string().optional(),
+    GOOGLE_CLIENT_SECRET: z.string().optional(),
   },
 
   client: {
     NEXT_PUBLIC_APP_URL: z.url().optional(),
+    NEXT_PUBLIC_GOOGLE_AUTH_ENABLED: z
+      .string()
+      .transform((val) => val === 'true')
+      .optional(),
   },
 
   runtimeEnv: {
-    // Server variables
     DATABASE_URL: process.env.DATABASE_URL,
     BETTER_AUTH_SECRET: process.env.BETTER_AUTH_SECRET,
     NODE_ENV: process.env.NODE_ENV,
@@ -60,9 +65,11 @@ export const env = createEnv({
     LOG_ENABLE_EXTERNAL: process.env.LOG_ENABLE_EXTERNAL,
     LOG_SERVICE_URL: process.env.LOG_SERVICE_URL,
     LOG_SERVICE_API_KEY: process.env.LOG_SERVICE_API_KEY,
-
-    // Client variables
+    GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
+    GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
     NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
+    NEXT_PUBLIC_GOOGLE_AUTH_ENABLED:
+      process.env.NEXT_PUBLIC_GOOGLE_AUTH_ENABLED,
   },
 
   onValidationError: (error: unknown) => {
@@ -100,6 +107,13 @@ export const env = createEnv({
   },
 
   onInvalidAccess: (variable: string) => {
+    if (process.env.NODE_ENV === 'development') {
+      console.warn(
+        `[Environment] Attempted to access server-side variable "${variable}" on client. This is usually safe to ignore during development.`
+      );
+      return undefined as never;
+    }
+
     logger.setContext('Environment').error('Invalid environment access', {
       variable,
       error: 'Attempted to access server-side environment variable on client',

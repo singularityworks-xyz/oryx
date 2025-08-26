@@ -24,6 +24,17 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
   },
+  socialProviders:
+    env.GOOGLE_CLIENT_ID && env.GOOGLE_CLIENT_SECRET
+      ? {
+          google: {
+            clientId: env.GOOGLE_CLIENT_ID,
+            clientSecret: env.GOOGLE_CLIENT_SECRET,
+            prompt: 'select_account',
+            accessType: 'offline',
+          },
+        }
+      : {},
   advanced: {
     cookiePrefix: 'oryx',
   },
@@ -34,4 +45,5 @@ export const auth = betterAuth({
 logger.setContext('Auth').info('Better Auth initialized successfully', {
   hasSecret: !!env.BETTER_AUTH_SECRET,
   secretLength: env.BETTER_AUTH_SECRET?.length || 0,
+  hasGoogleCredentials: !!(env.GOOGLE_CLIENT_ID && env.GOOGLE_CLIENT_SECRET),
 });
