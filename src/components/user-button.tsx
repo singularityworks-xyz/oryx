@@ -44,7 +44,6 @@ export default function UserButton() {
   }
 
   if (session?.user) {
-    // User is authenticated - show user menu
     const userInitials = session.user.name
       ? session.user.name
           .split(' ')
@@ -58,7 +57,7 @@ export default function UserButton() {
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button
-            className="relative h-9 w-9 rounded-full p-0 hover:bg-gray-100 focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+            className="relative h-9 w-9 p-0 hover:bg-gray-100 focus-visible:ring-2 focus-visible:ring-gray-900 focus-visible:ring-offset-2"
             variant="ghost"
           >
             <Avatar className="h-8 w-8">
@@ -115,17 +114,16 @@ export default function UserButton() {
     );
   }
 
-  // User is not authenticated - show login/signup buttons
   return (
     <div className="hidden items-center space-x-3 md:flex">
       <Link
-        className="rounded-md px-3 py-2 font-light text-5 text-gray-700 transition-colors hover:text-gray-900"
+        className="px-3 py-2 font-light text-gray-700 text-sm transition-colors hover:text-gray-900"
         href="/auth/login"
       >
         Sign In
       </Link>
       <Link
-        className="rounded-md bg-blue-600 px-4 py-2 font-light text-5 text-white transition-colors hover:bg-blue-700"
+        className="border border-gray-900 bg-gray-900 px-4 py-2 font-light text-sm text-white transition-colors hover:border-gray-800 hover:bg-gray-800"
         href="/auth/signup"
       >
         Sign Up

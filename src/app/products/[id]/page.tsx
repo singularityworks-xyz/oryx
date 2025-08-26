@@ -50,7 +50,7 @@ export default async function ProductDetailPage({
         <div className="mx-auto max-w-[1400px] px-4 sm:px-6 md:px-8 lg:px-10 xl:px-12">
           <div className="grid grid-cols-1 gap-8 sm:gap-12 md:gap-16 lg:grid-cols-2 lg:gap-20">
             <div className="space-y-4">
-              <div className="aspect-square overflow-hidden rounded-lg bg-gray-100">
+              <div className="aspect-square overflow-hidden bg-gray-100">
                 <Image
                   alt={product.name}
                   className="h-full w-full object-cover"

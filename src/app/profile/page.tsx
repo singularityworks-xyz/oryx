@@ -22,7 +22,7 @@ export default async function ProfilePage() {
           <div className="mx-auto mt-4 h-px w-16 bg-gray-300" />
         </div>
 
-        <div className="rounded-lg border border-gray-200 bg-white p-8 shadow-sm">
+        <div className="border border-gray-200 bg-white p-8 shadow-sm">
           <div className="space-y-6">
             <div>
               <h2 className="font-light font-outfit text-gray-900 text-xl">

@@ -4,10 +4,12 @@ import { Search, ShoppingCart } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
+import { useSession } from '@/lib/auth-client';
 import UserButton from './user-button';
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { data: session } = useSession();
 
   return (
     <nav className="sticky top-0 z-50 bg-white font-light font-outfit shadow-lg">
@@ -27,25 +29,25 @@ export default function Navbar() {
 
           <div className="hidden items-center space-x-8 md:flex">
             <Link
-              className="rounded-md px-3 py-2 font-light text-5 text-gray-700 hover:text-gray-900"
+              className="px-3 py-2 font-light text-5 text-gray-700 hover:text-gray-900"
               href="/products"
             >
               shop
             </Link>
             <Link
-              className="rounded-md px-3 py-2 font-light text-5 text-gray-700 hover:text-gray-900"
+              className="px-3 py-2 font-light text-5 text-gray-700 hover:text-gray-900"
               href="/contact"
             >
               contact
             </Link>
             <Link
-              className="rounded-md px-3 py-2 font-light text-5 text-gray-700 hover:text-gray-900"
+              className="px-3 py-2 font-light text-5 text-gray-700 hover:text-gray-900"
               href="/about"
             >
               about
             </Link>
             <button
-              className="rounded-md px-3 py-2 font-light text-5 text-gray-700 hover:text-gray-900"
+              className="px-3 py-2 font-light text-5 text-gray-700 hover:text-gray-900"
               type="button"
             >
               <Search className="h-5 w-5" />
@@ -54,15 +56,17 @@ export default function Navbar() {
 
           <div className="hidden items-center space-x-4 md:flex">
             <UserButton />
-            <Link
-              className="relative flex items-center rounded-md p-2 font-light text-5 text-gray-700 hover:text-gray-900"
-              href="/cart"
-            >
-              <ShoppingCart className="h-5 w-5" />
-              <span className="-top-1 -right-1 absolute flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-white text-xs">
-                3
-              </span>
-            </Link>
+            {session && (
+              <Link
+                className="relative flex items-center p-2 font-light text-5 text-gray-700 hover:text-gray-900"
+                href="/cart"
+              >
+                <ShoppingCart className="h-5 w-5" />
+                <span className="-top-1 -right-1 absolute flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-white text-xs">
+                  3
+                </span>
+              </Link>
+            )}
           </div>
 
           <div className="md:hidden">
@@ -111,45 +115,47 @@ export default function Navbar() {
         <div className="md:hidden">
           <div className="space-y-1 border-t bg-white px-2 pt-2 pb-3 sm:px-3">
             <Link
-              className="block rounded-md px-3 py-2 font-light text-base text-gray-700 hover:text-gray-900"
+              className="block px-3 py-2 font-light text-base text-gray-700 hover:text-gray-900"
               href="/products"
               onClick={() => setIsMenuOpen(false)}
             >
               Shop
             </Link>
             <Link
-              className="block rounded-md px-3 py-2 font-light text-base text-gray-700 hover:text-gray-900"
+              className="block px-3 py-2 font-light text-base text-gray-700 hover:text-gray-900"
               href="/contact"
               onClick={() => setIsMenuOpen(false)}
             >
               Contact
             </Link>
             <Link
-              className="block rounded-md px-3 py-2 font-light text-base text-gray-700 hover:text-gray-900"
+              className="block px-3 py-2 font-light text-base text-gray-700 hover:text-gray-900"
               href="/about"
               onClick={() => setIsMenuOpen(false)}
             >
               About
             </Link>
             <button
-              className="block w-full items-center rounded-md px-3 py-2 text-left font-light text-base text-gray-700 hover:text-gray-900"
+              className="block w-full items-center px-3 py-2 text-left font-light text-base text-gray-700 hover:text-gray-900"
               type="button"
             >
               <Search className="mr-2 h-5 w-5" />
               Search
             </button>
 
-            <Link
-              className="block items-center rounded-md px-3 py-2 font-light text-base text-gray-700 hover:text-gray-900"
-              href="/cart"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              <ShoppingCart className="mr-2 h-5 w-5" />
-              Cart
-              <span className="ml-2 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-white text-xs">
-                3
-              </span>
-            </Link>
+            {session && (
+              <Link
+                className="block items-center px-3 py-2 font-light text-base text-gray-700 hover:text-gray-900"
+                href="/cart"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                <ShoppingCart className="mr-2 h-5 w-5" />
+                Cart
+                <span className="ml-2 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-white text-xs">
+                  3
+                </span>
+              </Link>
+            )}
           </div>
         </div>
       )}
