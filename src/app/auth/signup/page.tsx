@@ -4,6 +4,10 @@ import { Eye, EyeOff, Lock, Mail, User } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
+import { signUp } from '@/lib/auth-client';
+
+const MIN_PASSWORD_LENGTH = 6;
+const REDIRECT_DELAY = 2000;
 
 export default function SignupPage() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -14,6 +18,19 @@ export default function SignupPage() {
     password: '',
     confirmPassword: '',
   });
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState(false);
+
+  const getButtonText = () => {
+    if (isLoading) {
+      return 'Creating Account...';
+    }
+    if (success) {
+      return 'Account Created!';
+    }
+    return 'Create Account';
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
@@ -22,18 +39,50 @@ export default function SignupPage() {
     });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle signup logic here
+    setIsLoading(true);
+    setError('');
+    setSuccess(false);
+
     if (formData.password !== formData.confirmPassword) {
-      alert('Passwords do not match');
+      setError('Passwords do not match');
+      setIsLoading(false);
       return;
+    }
+
+    if (formData.password.length < MIN_PASSWORD_LENGTH) {
+      setError(
+        `Password must be at least ${MIN_PASSWORD_LENGTH} characters long`
+      );
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      const result = await signUp.email({
+        email: formData.email,
+        password: formData.password,
+        name: `${formData.firstName} ${formData.lastName}`.trim(),
+      });
+
+      if (result.error) {
+        setError(result.error.message ?? 'Sign up failed');
+      } else {
+        setSuccess(true);
+        setTimeout(() => {
+          window.location.href = '/auth/login';
+        }, REDIRECT_DELAY);
+      }
+    } catch (_err) {
+      setError('An error occurred during sign up');
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
     <div className="flex min-h-screen bg-white">
-      {/* Left side - Form */}
       <div className="flex flex-1 items-center justify-center p-8 lg:p-12">
         <div className="w-full max-w-md space-y-8">
           <div className="text-center">
@@ -44,6 +93,18 @@ export default function SignupPage() {
             <p className="mt-4 font-light font-outfit text-gray-600 text-sm">
               Create your account to start your culinary journey
             </p>
+            {error && (
+              <div className="mt-4 rounded-lg bg-red-50 p-4 text-red-600">
+                <p className="font-light font-outfit text-sm">{error}</p>
+              </div>
+            )}
+            {success && (
+              <div className="mt-4 rounded-lg bg-green-50 p-4 text-green-600">
+                <p className="font-light font-outfit text-sm">
+                  Account created successfully! Redirecting to login...
+                </p>
+              </div>
+            )}
           </div>
 
           <form className="space-y-6" onSubmit={handleSubmit}>
@@ -196,10 +257,11 @@ export default function SignupPage() {
             </div>
 
             <button
-              className="w-full border border-gray-900 bg-gray-900 px-8 py-4 font-light font-outfit text-base text-white transition-colors duration-300 hover:border-gray-800 hover:bg-gray-800"
+              className="w-full border border-gray-900 bg-gray-900 px-8 py-4 font-light font-outfit text-base text-white transition-colors duration-300 hover:border-gray-800 hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-50"
+              disabled={isLoading || success}
               type="submit"
             >
-              Create Account
+              {getButtonText()}
             </button>
           </form>
 
@@ -208,7 +270,7 @@ export default function SignupPage() {
               Already have an account?{' '}
               <Link
                 className="font-medium text-gray-900 transition-colors hover:text-gray-700"
-                href="/login"
+                href="/auth/login"
               >
                 Sign in here
               </Link>

@@ -9,5 +9,29 @@
       "!.vscode",
       "!src/app/globals.css"
     ]
-  }
+  },
+  "linter": {
+    "rules": {
+      "suspicious": {
+        "noConsole": {
+          "level": "warn",
+          "options": {
+            "allow": ["error", "log"]
+          }
+        }
+      }
+    }
+  },
+  "overrides": [
+    {
+      "includes": ["src/lib/env.ts"],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noConsole": "off"
+          }
+        }
+      }
+    }
+  ]
 }

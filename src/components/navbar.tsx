@@ -139,7 +139,7 @@ export default function Navbar() {
 
             <Link
               className="block rounded-md px-3 py-2 font-light text-base text-gray-700 hover:text-gray-900"
-              href="/auth/signin"
+              href="/auth/login"
               onClick={() => setIsMenuOpen(false)}
             >
               Sign In

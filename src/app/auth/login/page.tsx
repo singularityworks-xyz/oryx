@@ -4,14 +4,36 @@ import { Eye, EyeOff, Lock, Mail } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
+import { signIn } from '@/lib/auth-client';
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsLoading(true);
+    setError('');
+
+    try {
+      const result = await signIn.email({
+        email,
+        password,
+      });
+
+      if (result.error) {
+        setError(result.error?.message ?? 'Sign in failed');
+      } else {
+        window.location.href = '/';
+      }
+    } catch {
+      setError('An error occurred during sign in');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -26,6 +48,11 @@ export default function LoginPage() {
             <p className="mt-4 font-light font-outfit text-gray-600 text-sm">
               Sign in to your account to continue
             </p>
+            {error && (
+              <div className="mt-4 rounded-lg bg-red-50 p-4 text-red-600">
+                <p className="font-light font-outfit text-sm">{error}</p>
+              </div>
+            )}
           </div>
 
           <form className="space-y-6" onSubmit={handleSubmit}>
@@ -103,10 +130,11 @@ export default function LoginPage() {
             </div>
 
             <button
-              className="w-full border border-gray-900 bg-gray-900 px-8 py-4 font-light font-outfit text-base text-white transition-colors duration-300 hover:border-gray-800 hover:bg-gray-800"
+              className="w-full border border-gray-900 bg-gray-900 px-8 py-4 font-light font-outfit text-base text-white transition-colors duration-300 hover:border-gray-800 hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-50"
+              disabled={isLoading}
               type="submit"
             >
-              Sign In
+              {isLoading ? 'Signing In...' : 'Sign In'}
             </button>
           </form>
 
@@ -115,7 +143,7 @@ export default function LoginPage() {
               Don't have an account?{' '}
               <Link
                 className="font-medium text-gray-900 transition-colors hover:text-gray-700"
-                href="/signup"
+                href="/auth/signup"
               >
                 Create one here
               </Link>
