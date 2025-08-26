@@ -4,6 +4,7 @@ import { Search, ShoppingCart } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
+import UserButton from './user-button';
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -52,6 +53,7 @@ export default function Navbar() {
           </div>
 
           <div className="hidden items-center space-x-4 md:flex">
+            <UserButton />
             <Link
               className="relative flex items-center rounded-md p-2 font-light text-5 text-gray-700 hover:text-gray-900"
               href="/cart"
@@ -136,21 +138,6 @@ export default function Navbar() {
               <Search className="mr-2 h-5 w-5" />
               Search
             </button>
-
-            <Link
-              className="block rounded-md px-3 py-2 font-light text-base text-gray-700 hover:text-gray-900"
-              href="/auth/login"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Sign In
-            </Link>
-            <Link
-              className="block rounded-md bg-blue-600 px-3 py-2 font-light text-base text-white hover:bg-blue-700"
-              href="/auth/signup"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Sign Up
-            </Link>
 
             <Link
               className="block items-center rounded-md px-3 py-2 font-light text-base text-gray-700 hover:text-gray-900"

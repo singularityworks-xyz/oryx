@@ -7,7 +7,8 @@
       "!globals.css",
       "node_modules/**",
       "!.vscode",
-      "!src/app/globals.css"
+      "!src/app/globals.css",
+      "!src/components/ui"
     ]
   },
   "linter": {
