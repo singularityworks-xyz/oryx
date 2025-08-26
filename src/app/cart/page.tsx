@@ -1,12 +1,22 @@
 import { ArrowLeft, Minus, Plus, ShoppingBag, Trash2 } from 'lucide-react';
+import { headers } from 'next/headers';
 import Image from 'next/image';
 import Link from 'next/link';
+import { redirect } from 'next/navigation';
 import { mockCartItems } from '@/data/mock-data';
+import { auth } from '@/lib/auth';
 
 const FREE_SHIPPING_THRESHOLD = 200;
 const SHIPPING_COST = 25;
 
-export default function CartPage() {
+export default async function CartPage() {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  if (!session) {
+    redirect('/auth/login');
+  }
   const subtotal = mockCartItems.reduce(
     (accumulator, item) => accumulator + item.price * item.quantity,
     0
@@ -43,14 +53,14 @@ export default function CartPage() {
             <div className="space-y-4 sm:space-y-6 lg:col-span-2">
               {mockCartItems.map((item) => (
                 <div
-                  className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm sm:p-6"
+                  className="border border-gray-200 bg-white p-4 shadow-sm sm:p-6"
                   key={item.id}
                 >
                   <div className="flex items-center space-x-4">
                     <div className="h-20 w-20 flex-shrink-0 sm:h-24 sm:w-24">
                       <Image
                         alt={item.name}
-                        className="h-full w-full rounded-lg object-cover"
+                        className="h-full w-full object-cover"
                         height={96}
                         src={item.image}
                         width={96}
@@ -109,7 +119,7 @@ export default function CartPage() {
             </div>
 
             <div className="lg:col-span-1">
-              <div className="sticky top-6 rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+              <div className="sticky top-6 border border-gray-200 bg-white p-6 shadow-sm">
                 <h2 className="mb-6 font-light font-playfair text-gray-900 text-lg sm:text-xl">
                   Order Summary
                 </h2>

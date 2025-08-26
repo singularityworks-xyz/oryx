@@ -2,6 +2,37 @@
   "$schema": "https://biomejs.dev/schemas/2.2.0/schema.json",
   "extends": ["ultracite"],
   "files": {
-    "includes": ["!globals.css"]
-  }
+    "includes": [
+      "**",
+      "!globals.css",
+      "node_modules/**",
+      "!.vscode",
+      "!src/app/globals.css",
+      "!src/components/ui"
+    ]
+  },
+  "linter": {
+    "rules": {
+      "suspicious": {
+        "noConsole": {
+          "level": "warn",
+          "options": {
+            "allow": ["error", "log"]
+          }
+        }
+      }
+    }
+  },
+  "overrides": [
+    {
+      "includes": ["src/lib/env.ts"],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noConsole": "off"
+          }
+        }
+      }
+    }
+  ]
 }

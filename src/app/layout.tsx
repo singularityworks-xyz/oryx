@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono, Outfit, Playfair_Display } from 'next/font/google';
+import Script from 'next/script';
 import './globals.css';
 import Footer from '@/components/footer';
 import Navbar from '@/components/navbar';
@@ -36,12 +37,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <head>
-        <script defer src="https://tracking.zephyyrr.in/script.js" data-website-id="8ea5396e-6ac6-4ede-a92d-d0b476d9bf3b"></script>
-      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${outfit.variable} ${playfairDisplay.variable} bg-gray-50 antialiased`}
       >
+        <Script
+          data-website-id="8ea5396e-6ac6-4ede-a92d-d0b476d9bf3b"
+          src="https://tracking.zephyyrr.in/script.js"
+          strategy="afterInteractive"
+        />
         <div className="flex min-h-screen flex-col">
           <Navbar />
           <main className="flex-1">{children}</main>
