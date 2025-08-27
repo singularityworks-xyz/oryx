@@ -61,8 +61,8 @@ export default function Home() {
 
       <section className="hidden h-[calc(100vh-64px)] bg-white lg:block">
         <div className="mx-auto flex h-full max-w-[1240px] flex-row">
-          <div className="flex h-full w-[70%] flex-col justify-between overflow-hidden">
-            <div className="flex flex-1 items-center justify-end px-8 py-8">
+          <div className="flex h-full w-[70%] flex-col overflow-hidden">
+            <div className="flex items-center justify-end px-8 py-8">
               <Image
                 alt="White Plate"
                 className="mr-8 h-auto w-2/5 object-contain"
@@ -83,7 +83,7 @@ export default function Home() {
               />
             </div>
 
-            <div className="my-8 px-8 pb-8">
+            <div className="flex flex-1 flex-col px-8 pb-0">
               <h1 className="font-normal font-playfair text-6xl text-gray-900 leading-tight">
                 Every <span className="font-medium italic">detail</span>{' '}
                 matters.
@@ -94,26 +94,33 @@ export default function Home() {
                 </span>
               </h1>
 
-              <div className="mt-8">
-                <Link
-                  className="inline-flex items-center border border-gray-900 bg-gray-900 px-8 py-4 font-medium text-lg text-white transition-colors duration-300 hover:border-gray-800 hover:bg-gray-800"
-                  href="/products"
+              <div className="relative mt-10 flex-1 overflow-hidden">
+                <video
+                  autoPlay
+                  className="h-full w-full object-cover"
+                  loop
+                  muted
+                  playsInline
+                  preload="auto"
                 >
-                  Shop Now
-                  <ArrowRight className="ml-3 h-5 w-5" />
-                </Link>
-              </div>
-
-              <div className="relative mt-8 overflow-hidden">
-                <Image
-                  alt="Wooden Bowl"
-                  className="h-auto w-4/5 object-cover object-top"
-                  height={3000}
-                  priority
-                  quality={100}
-                  src="/wooden-bowl.png"
-                  width={2000}
-                />
+                  <source src="/mobile_intro.mp4" type="video/mp4" />
+                  Your browser does not support the video tag.
+                </video>
+                <div className="absolute inset-0 bg-black/30" />
+                <div className="absolute inset-0 flex flex-col justify-end p-8">
+                  <div className="mb-8 text-center text-white">
+                    <p className="mb-6 font-light font-outfit text-sm tracking-wide">
+                      Culinary Excellence
+                    </p>
+                    <Link
+                      className="inline-flex items-center border border-white bg-transparent px-8 py-4 font-medium text-lg text-white transition-all duration-300 hover:bg-white hover:text-gray-900"
+                      href="/products"
+                    >
+                      Shop Now
+                      <ArrowRight className="ml-3 h-5 w-5" />
+                    </Link>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
