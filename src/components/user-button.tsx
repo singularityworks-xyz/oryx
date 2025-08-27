@@ -38,7 +38,7 @@ export default function UserButton() {
   if (isPending) {
     return (
       <div className="flex items-center space-x-2">
-        <div className="h-8 w-8 animate-pulse rounded-full bg-gray-200" />
+        <div className="h-8 w-8 animate-pulse bg-gray-200" />
       </div>
     );
   }

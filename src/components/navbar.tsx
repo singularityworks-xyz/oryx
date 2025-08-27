@@ -62,7 +62,7 @@ export default function Navbar() {
                 href="/cart"
               >
                 <ShoppingCart className="h-5 w-5" />
-                <span className="-top-1 -right-1 absolute flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-white text-xs">
+                <span className="-top-1 -right-1 absolute flex h-5 w-5 items-center justify-center bg-red-500 text-white text-xs">
                   3
                 </span>
               </Link>
@@ -152,7 +152,7 @@ export default function Navbar() {
               >
                 <ShoppingCart className="mr-2 h-5 w-5" />
                 Cart
-                <span className="ml-2 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-white text-xs">
+                <span className="ml-2 flex h-5 w-5 items-center justify-center bg-red-500 text-white text-xs">
                   3
                 </span>
               </Link>
