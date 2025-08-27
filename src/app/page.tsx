@@ -1,19 +1,71 @@
+'use client';
+
 import { ArrowRight } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useEffect, useRef } from 'react';
 import ProductCard from '@/components/product-card';
 import { mockProducts } from '@/data/mock-data';
 
 export default function Home() {
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (video) {
+      const playVideo = async () => {
+        try {
+          await video.play();
+        } catch {
+          const handleUserInteraction = () => {
+            video.play().catch(console.error);
+            document.removeEventListener('click', handleUserInteraction);
+            document.removeEventListener('touchstart', handleUserInteraction);
+          };
+          document.addEventListener('click', handleUserInteraction);
+          document.addEventListener('touchstart', handleUserInteraction);
+        }
+      };
+
+      playVideo();
+    }
+  }, []);
+
   return (
     <div className="bg-white">
-      <section className="h-[calc(100vh-64px)] bg-white">
-        <div className="mx-auto flex h-full max-w-[1240px] flex-col lg:flex-row">
-          <div className="order-2 flex h-full w-full flex-col justify-between overflow-hidden lg:order-1 lg:w-[70%] lg:justify-start">
-            <div className="flex flex-1 items-center justify-center px-4 py-4 sm:px-6 lg:flex-none lg:justify-end lg:px-8 lg:py-8">
+      <section className="relative h-96 w-full overflow-hidden lg:hidden">
+        <video
+          autoPlay
+          className="h-full w-full object-cover"
+          loop
+          muted
+          playsInline
+          preload="auto"
+          ref={videoRef}
+        >
+          <source src="/mobile_intro.mp4" type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
+        <div className="absolute inset-0 flex items-end justify-center bg-black/40">
+          <div className="px-4 pb-8 text-center text-white">
+            <h2 className="mb-4 font-light font-playfair text-2xl tracking-wide sm:text-3xl md:text-4xl">
+              Experience Culinary Excellence
+            </h2>
+            <p className="mx-auto max-w-xs font-light font-outfit text-sm leading-relaxed sm:max-w-sm sm:text-base md:max-w-xl md:text-lg">
+              Discover the art of fine dining with our premium collection of
+              elegant kitchen essentials
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section className="hidden h-[calc(100vh-64px)] bg-white lg:block">
+        <div className="mx-auto flex h-full max-w-[1240px] flex-row">
+          <div className="flex h-full w-[70%] flex-col justify-between overflow-hidden">
+            <div className="flex flex-1 items-center justify-end px-8 py-8">
               <Image
                 alt="White Plate"
-                className="mr-4 h-auto w-1/3 object-contain sm:w-2/5 lg:mr-8 lg:w-2/5"
+                className="mr-8 h-auto w-2/5 object-contain"
                 height={300}
                 priority
                 quality={100}
@@ -22,7 +74,7 @@ export default function Home() {
               />
               <Image
                 alt="Black Plate"
-                className="h-auto w-1/3 object-contain sm:w-2/5 lg:w-2/5"
+                className="h-auto w-2/5 object-contain"
                 height={300}
                 priority
                 quality={100}
@@ -31,8 +83,8 @@ export default function Home() {
               />
             </div>
 
-            <div className="my-4 flex-shrink-0 px-4 pb-4 sm:px-6 lg:my-8 lg:px-8 lg:pb-8">
-              <h1 className="font-normal font-playfair text-2xl text-gray-900 leading-tight sm:text-3xl md:text-4xl lg:text-6xl">
+            <div className="my-8 px-8 pb-8">
+              <h1 className="font-normal font-playfair text-6xl text-gray-900 leading-tight">
                 Every <span className="font-medium italic">detail</span>{' '}
                 matters.
                 <br />
@@ -42,17 +94,17 @@ export default function Home() {
                 </span>
               </h1>
 
-              <div className="mt-4 lg:mt-8">
+              <div className="mt-8">
                 <Link
-                  className="inline-flex items-center border border-gray-900 bg-gray-900 px-6 py-3 font-medium text-base text-white transition-colors duration-300 hover:border-gray-800 hover:bg-gray-800 lg:px-8 lg:py-4 lg:text-lg"
+                  className="inline-flex items-center border border-gray-900 bg-gray-900 px-8 py-4 font-medium text-lg text-white transition-colors duration-300 hover:border-gray-800 hover:bg-gray-800"
                   href="/products"
                 >
                   Shop Now
-                  <ArrowRight className="ml-2 h-4 w-4 lg:ml-3 lg:h-5 lg:w-5" />
+                  <ArrowRight className="ml-3 h-5 w-5" />
                 </Link>
               </div>
 
-              <div className="relative mt-4 hidden overflow-hidden lg:mt-8 lg:block">
+              <div className="relative mt-8 overflow-hidden">
                 <Image
                   alt="Wooden Bowl"
                   className="h-auto w-4/5 object-cover object-top"
@@ -66,12 +118,12 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="order-1 flex w-full flex-col lg:order-2 lg:w-[30%]">
-            <div className="relative h-32 sm:h-40 lg:h-1/2">
-              <div className="absolute top-2 right-2 sm:top-4 sm:right-4 lg:top-4 lg:right-4 lg:mt-8 lg:mr-8">
+          <div className="flex w-[30%] flex-col">
+            <div className="relative h-1/2">
+              <div className="absolute top-4 right-4 mt-8 mr-8">
                 <Image
                   alt="Oryx Logo"
-                  className="h-12 w-auto sm:h-16 lg:h-20"
+                  className="h-20 w-auto"
                   height={40}
                   priority
                   quality={100}
@@ -81,11 +133,11 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="flex h-32 items-center justify-center overflow-hidden sm:h-40 lg:flex lg:h-1/2">
-              <div className="flex h-full w-full justify-between px-4 sm:px-6 lg:px-0">
+            <div className="flex h-1/2 items-center justify-center">
+              <div className="flex h-full w-full justify-between">
                 <Image
                   alt="Fork"
-                  className="h-full w-2/5 object-cover object-top sm:w-3/5 lg:w-3/5"
+                  className="h-full w-3/5 object-cover object-top"
                   height={3000}
                   priority
                   quality={100}
@@ -94,7 +146,7 @@ export default function Home() {
                 />
                 <Image
                   alt="Spoon"
-                  className="h-full w-2/5 object-cover object-top sm:w-3/5 lg:w-3/5"
+                  className="h-full w-3/5 object-cover object-top"
                   height={3000}
                   priority
                   quality={100}
@@ -120,7 +172,7 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="mb-12 grid grid-cols-2 gap-4 sm:mb-16 sm:gap-6 md:mb-20 md:grid-cols-3 md:gap-8 lg:grid-cols-4 lg:gap-10 xl:gap-12">
+          <div className="mb-12 grid grid-cols-2 gap-8 sm:grid-cols-2 sm:gap-8 md:mb-20 md:grid-cols-3 md:gap-10 lg:grid-cols-4 lg:gap-12 xl:gap-16">
             {mockProducts.map((product) => (
               <ProductCard key={product._id} product={product} />
             ))}
