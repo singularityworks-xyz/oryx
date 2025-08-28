@@ -48,11 +48,9 @@ export default function SearchPage() {
   const [showFilters, setShowFilters] = useState(false);
   const [filteredProducts, setFilteredProducts] = useState(mockProducts);
 
-  // Filter products based on all criteria
   useEffect(() => {
     let filtered = mockProducts;
 
-    // Text search
     if (searchQuery) {
       filtered = filtered.filter(
         (product) =>
@@ -65,7 +63,6 @@ export default function SearchPage() {
       );
     }
 
-    // Category filter
     if (selectedCategories.length > 0) {
       filtered = filtered.filter((product) =>
         selectedCategories.some((category) =>
@@ -74,7 +71,6 @@ export default function SearchPage() {
       );
     }
 
-    // Material filter
     if (selectedMaterials.length > 0) {
       filtered = filtered.filter((product) =>
         selectedMaterials.some((material) =>
@@ -83,7 +79,6 @@ export default function SearchPage() {
       );
     }
 
-    // Brand filter
     if (selectedBrands.length > 0) {
       filtered = filtered.filter((product) =>
         selectedBrands.some((brand) =>
@@ -92,14 +87,12 @@ export default function SearchPage() {
       );
     }
 
-    // Price range filter
     filtered = filtered.filter(
       (product) =>
         product.sellingPrice >= priceRange.min &&
         product.sellingPrice <= priceRange.max
     );
 
-    // Sort products
     filtered.sort((a, b) => {
       switch (sortBy) {
         case 'price-low':
@@ -144,7 +137,6 @@ export default function SearchPage() {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Header */}
       <section className="bg-white py-12 sm:py-16 md:py-20">
         <div className="mx-auto max-w-[1400px] px-4 sm:px-6 md:px-8 lg:px-10 xl:px-12">
           <div className="mb-8 text-center">
@@ -154,7 +146,6 @@ export default function SearchPage() {
             <div className="mx-auto h-px w-16 bg-gray-300 sm:w-20 md:w-24 lg:w-28" />
           </div>
 
-          {/* Search Bar */}
           <div className="mx-auto max-w-2xl">
             <div className="relative">
               <Search className="-translate-y-1/2 absolute top-1/2 left-6 h-5 w-5 transform text-gray-400" />
@@ -170,16 +161,13 @@ export default function SearchPage() {
         </div>
       </section>
 
-      {/* Filters & Results */}
       <section className="pb-12 sm:pb-16 md:pb-20 lg:pb-24">
         <div className="mx-auto max-w-[1400px] px-4 sm:px-6 md:px-8 lg:px-10 xl:px-12">
           <div className="flex flex-col gap-8 lg:flex-row lg:gap-12">
-            {/* Sidebar Filters */}
             <div
               className={`lg:w-80 ${showFilters ? 'block' : 'hidden lg:block'}`}
             >
               <div className="sticky top-6 space-y-8">
-                {/* Mobile Filter Toggle */}
                 <div className="flex items-center justify-between lg:hidden">
                   <h2 className="font-light font-outfit text-gray-900 text-lg">
                     Filters
@@ -193,7 +181,6 @@ export default function SearchPage() {
                   </button>
                 </div>
 
-                {/* Search Results Count */}
                 <div className="border-gray-200 border-b pb-4">
                   <p className="font-light font-outfit text-gray-600 text-sm">
                     {filteredProducts.length} product
@@ -201,7 +188,6 @@ export default function SearchPage() {
                   </p>
                 </div>
 
-                {/* Price Range Slider */}
                 <div className="space-y-4">
                   <h3 className="font-light font-outfit text-base text-gray-900">
                     Price Range
@@ -246,7 +232,6 @@ export default function SearchPage() {
                   </div>
                 </div>
 
-                {/* Categories */}
                 <div className="space-y-4">
                   <h3 className="font-light font-outfit text-base text-gray-900">
                     Categories
@@ -282,7 +267,6 @@ export default function SearchPage() {
                   </div>
                 </div>
 
-                {/* Materials */}
                 <div className="space-y-4">
                   <h3 className="font-light font-outfit text-base text-gray-900">
                     Materials
@@ -318,7 +302,6 @@ export default function SearchPage() {
                   </div>
                 </div>
 
-                {/* Brands */}
                 <div className="space-y-4">
                   <h3 className="font-light font-outfit text-base text-gray-900">
                     Brands
@@ -351,7 +334,6 @@ export default function SearchPage() {
                   </div>
                 </div>
 
-                {/* Clear Filters */}
                 {hasActiveFilters && (
                   <button
                     className="w-full border border-gray-300 bg-white px-4 py-3 font-light font-outfit text-gray-700 text-sm transition-colors hover:bg-gray-50"
@@ -364,9 +346,7 @@ export default function SearchPage() {
               </div>
             </div>
 
-            {/* Main Content */}
             <div className="flex-1">
-              {/* Top Bar */}
               <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <div className="flex items-center gap-4">
                   <button
@@ -458,12 +438,11 @@ export default function SearchPage() {
                 </div>
               </div>
 
-              {/* Results */}
               {filteredProducts.length > 0 ? (
                 <div
                   className={
                     viewMode === 'grid'
-                      ? 'grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4'
+                      ? 'grid grid-cols-2 gap-4 sm:gap-6 md:grid-cols-3 md:gap-8 lg:grid-cols-4 lg:gap-10'
                       : 'space-y-6'
                   }
                 >

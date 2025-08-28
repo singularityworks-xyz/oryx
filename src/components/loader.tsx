@@ -3,7 +3,7 @@
 import { cn } from '@/lib/utils';
 
 type LoaderProps = {
-  size?: 'sm' | 'md' | 'lg';
+  size?: 'sm' | 'md' | 'lg' | 'responsive';
   className?: string;
 };
 
@@ -12,6 +12,7 @@ export default function Loader({ size = 'md', className }: LoaderProps) {
     sm: 'h-4 w-4',
     md: 'h-8 w-8',
     lg: 'h-12 w-12',
+    responsive: 'h-8 w-8 sm:h-10 sm:w-10 md:h-12 md:w-12',
   };
 
   return (
@@ -53,13 +54,13 @@ export function PageLoader() {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50">
-      <div className="space-y-6 text-center">
-        <Loader size="lg" />
+      <div className="space-y-6 px-6 text-center sm:px-0">
+        <Loader size="responsive" />
         <div className="space-y-2">
-          <p className="font-light font-outfit text-gray-700 text-sm">
+          <p className="font-light font-outfit text-gray-700 text-sm sm:text-base">
             Loading...
           </p>
-          <p className="max-w-md font-light font-outfit text-gray-600 text-xs leading-relaxed">
+          <p className="mx-auto max-w-md font-light font-outfit text-gray-600 text-xs leading-relaxed sm:text-sm">
             {randomFact}
           </p>
         </div>

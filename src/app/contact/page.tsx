@@ -1,5 +1,3 @@
-import { Clock, Mail, MapPin, Phone } from 'lucide-react';
-
 export default function ContactPage() {
   return (
     <div className="bg-white">
@@ -16,80 +14,7 @@ export default function ContactPage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 gap-12 lg:grid-cols-2 lg:gap-16 xl:gap-20">
-            <div className="space-y-8">
-              <div className="space-y-6">
-                <h2 className="font-light font-playfair text-gray-900 text-xl tracking-wide sm:text-2xl md:text-3xl">
-                  CONTACT INFORMATION
-                </h2>
-                <div className="h-px w-16 bg-gray-300" />
-              </div>
-
-              <div className="space-y-6">
-                <div className="flex items-start space-x-4">
-                  <div className="mt-1 flex-shrink-0">
-                    <Mail className="h-5 w-5 text-gray-400" />
-                  </div>
-                  <div>
-                    <p className="font-light font-outfit text-gray-900 text-sm sm:text-base">
-                      Email
-                    </p>
-                    <p className="font-light font-outfit text-gray-600 text-sm sm:text-base">
-                      hello@oryx.com
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-start space-x-4">
-                  <div className="mt-1 flex-shrink-0">
-                    <Phone className="h-5 w-5 text-gray-400" />
-                  </div>
-                  <div>
-                    <p className="font-light font-outfit text-gray-900 text-sm sm:text-base">
-                      Phone
-                    </p>
-                    <p className="font-light font-outfit text-gray-600 text-sm sm:text-base">
-                      +1 (555) 123-4567
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-start space-x-4">
-                  <div className="mt-1 flex-shrink-0">
-                    <MapPin className="h-5 w-5 text-gray-400" />
-                  </div>
-                  <div>
-                    <p className="font-light font-outfit text-gray-900 text-sm sm:text-base">
-                      Address
-                    </p>
-                    <p className="font-light font-outfit text-gray-600 text-sm sm:text-base">
-                      123 Culinary District
-                      <br />
-                      Gourmet City, GC 12345
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-start space-x-4">
-                  <div className="mt-1 flex-shrink-0">
-                    <Clock className="h-5 w-5 text-gray-400" />
-                  </div>
-                  <div>
-                    <p className="font-light font-outfit text-gray-900 text-sm sm:text-base">
-                      Business Hours
-                    </p>
-                    <p className="font-light font-outfit text-gray-600 text-sm sm:text-base">
-                      Monday - Friday: 9:00 AM - 6:00 PM
-                      <br />
-                      Saturday: 10:00 AM - 4:00 PM
-                      <br />
-                      Sunday: Closed
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
+          <div className="mx-auto max-w-2xl">
             <div className="space-y-8">
               <div className="space-y-6">
                 <h2 className="font-light font-playfair text-gray-900 text-xl tracking-wide sm:text-2xl md:text-3xl">
@@ -99,10 +24,10 @@ export default function ContactPage() {
               </div>
 
               <form className="space-y-6">
-                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <div>
                     <label
-                      className="mb-2 block font-light font-outfit text-gray-700 text-sm"
+                      className="mb-1.5 block font-light font-outfit text-gray-700 text-sm"
                       htmlFor="firstName"
                     >
                       First Name
@@ -116,7 +41,7 @@ export default function ContactPage() {
                   </div>
                   <div>
                     <label
-                      className="mb-2 block font-light font-outfit text-gray-700 text-sm"
+                      className="mb-1.5 block font-light font-outfit text-gray-700 text-sm"
                       htmlFor="lastName"
                     >
                       Last Name
@@ -132,7 +57,7 @@ export default function ContactPage() {
 
                 <div>
                   <label
-                    className="mb-2 block font-light font-outfit text-gray-700 text-sm"
+                    className="mb-1.5 block font-light font-outfit text-gray-700 text-sm"
                     htmlFor="email"
                   >
                     Email
@@ -147,7 +72,7 @@ export default function ContactPage() {
 
                 <div>
                   <label
-                    className="mb-2 block font-light font-outfit text-gray-700 text-sm"
+                    className="mb-1.5 block font-light font-outfit text-gray-700 text-sm"
                     htmlFor="subject"
                   >
                     Subject
@@ -167,7 +92,7 @@ export default function ContactPage() {
 
                 <div>
                   <label
-                    className="mb-2 block font-light font-outfit text-gray-700 text-sm"
+                    className="mb-1.5 block font-light font-outfit text-gray-700 text-sm"
                     htmlFor="message"
                   >
                     Message

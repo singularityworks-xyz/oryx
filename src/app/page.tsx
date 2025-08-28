@@ -33,7 +33,7 @@ export default function Home() {
 
   return (
     <div className="bg-white">
-      <section className="relative h-96 w-full overflow-hidden lg:hidden">
+      <section className="relative h-[50vh] min-h-96 w-full overflow-hidden lg:hidden">
         <video
           autoPlay
           className="h-full w-full object-cover"
@@ -46,15 +46,22 @@ export default function Home() {
           <source src="/mobile_intro.mp4" type="video/mp4" />
           Your browser does not support the video tag.
         </video>
-        <div className="absolute inset-0 flex items-end justify-center bg-black/40">
-          <div className="px-4 pb-8 text-center text-white">
-            <h2 className="mb-4 font-light font-playfair text-2xl tracking-wide sm:text-3xl md:text-4xl">
+        <div className="absolute inset-0 flex items-center justify-center bg-black/40">
+          <div className="mx-auto max-w-lg px-4 py-8 text-center text-white">
+            <h2 className="mb-4 font-light font-playfair text-xl leading-tight tracking-wide sm:text-2xl md:text-3xl">
               Experience Culinary Excellence
             </h2>
-            <p className="mx-auto max-w-xs font-light font-outfit text-sm leading-relaxed sm:max-w-sm sm:text-base md:max-w-xl md:text-lg">
+            <p className="mx-auto mb-6 max-w-xs font-light font-outfit text-sm leading-relaxed sm:max-w-sm sm:text-base md:max-w-lg">
               Discover the art of fine dining with our premium collection of
               elegant kitchen essentials
             </p>
+            <Link
+              className="inline-flex items-center border border-white bg-transparent px-6 py-3 font-medium text-sm text-white transition-all duration-300 hover:bg-white hover:text-gray-900 sm:px-8 sm:py-4 sm:text-base"
+              href="/products"
+            >
+              Shop Now
+              <ArrowRight className="ml-2 h-4 w-4 sm:ml-3 sm:h-5 sm:w-5" />
+            </Link>
           </div>
         </div>
       </section>
@@ -94,7 +101,7 @@ export default function Home() {
                 </span>
               </h1>
 
-              <div className="relative mt-10 flex-1 overflow-hidden">
+              <div className="relative mt-6 min-h-[300px] flex-1 overflow-hidden">
                 <video
                   autoPlay
                   className="h-full w-full object-cover"
@@ -107,17 +114,17 @@ export default function Home() {
                   Your browser does not support the video tag.
                 </video>
                 <div className="absolute inset-0 bg-black/30" />
-                <div className="absolute inset-0 flex flex-col justify-end p-8">
-                  <div className="mb-8 text-center text-white">
-                    <p className="mb-6 font-light font-outfit text-sm tracking-wide">
+                <div className="absolute inset-0 flex flex-col items-center justify-center p-6 lg:p-8">
+                  <div className="max-w-sm text-center text-white">
+                    <p className="mb-4 font-light font-outfit text-sm tracking-wide lg:mb-6 lg:text-base">
                       Culinary Excellence
                     </p>
                     <Link
-                      className="inline-flex items-center border border-white bg-transparent px-8 py-4 font-medium text-lg text-white transition-all duration-300 hover:bg-white hover:text-gray-900"
+                      className="inline-flex items-center border border-white bg-transparent px-6 py-3 font-medium text-sm text-white transition-all duration-300 hover:bg-white hover:text-gray-900 lg:px-8 lg:py-4 lg:text-base"
                       href="/products"
                     >
                       Shop Now
-                      <ArrowRight className="ml-3 h-5 w-5" />
+                      <ArrowRight className="ml-2 h-4 w-4 lg:ml-3 lg:h-5 lg:w-5" />
                     </Link>
                   </div>
                 </div>
@@ -179,7 +186,7 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="mb-12 grid grid-cols-2 gap-8 sm:grid-cols-2 sm:gap-8 md:mb-20 md:grid-cols-3 md:gap-10 lg:grid-cols-4 lg:gap-12 xl:gap-16">
+          <div className="mb-12 grid grid-cols-2 gap-4 sm:gap-6 md:mb-20 md:grid-cols-3 md:gap-8 lg:grid-cols-4 lg:gap-10 xl:gap-12">
             {mockProducts.map((product) => (
               <ProductCard key={product._id} product={product} />
             ))}

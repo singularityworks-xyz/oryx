@@ -48,7 +48,7 @@ export default function Navbar() {
             </Link>
             <Link
               className="px-3 py-2 font-light text-5 text-gray-700 hover:text-gray-900"
-              href="/search"
+              href="/products"
             >
               <Search className="h-5 w-5" />
             </Link>
@@ -127,7 +127,7 @@ export default function Navbar() {
         <div className="border-gray-200 border-t bg-white px-0 py-3 md:hidden">
           <Link
             className="flex w-full items-center space-x-3 border border-gray-300 bg-gray-50 px-4 py-3 text-gray-700 transition-colors hover:border-gray-400 hover:bg-gray-100"
-            href="/search"
+            href="/products"
           >
             <Search className="h-5 w-5 flex-shrink-0" />
             <span className="font-light font-outfit text-sm">

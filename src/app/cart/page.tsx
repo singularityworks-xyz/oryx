@@ -53,10 +53,17 @@ export default async function CartPage() {
             <div className="space-y-4 sm:space-y-6 lg:col-span-2">
               {mockCartItems.map((item) => (
                 <div
-                  className="border border-gray-200 bg-white p-4 shadow-sm sm:p-6"
+                  className="relative border border-gray-200 bg-white p-4 shadow-sm sm:p-6"
                   key={item.id}
                 >
-                  <div className="flex items-center space-x-4">
+                  <button
+                    className="absolute top-2 right-2 p-2 text-red-500 hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-50"
+                    disabled
+                    type="button"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </button>
+                  <div className="grid grid-cols-[5rem_1fr] gap-3 sm:flex sm:items-center sm:gap-4">
                     <div className="h-20 w-20 flex-shrink-0 sm:h-24 sm:w-24">
                       <Image
                         alt={item.name}
@@ -67,7 +74,7 @@ export default async function CartPage() {
                       />
                     </div>
 
-                    <div className="min-w-0 flex-1">
+                    <div className="min-w-0">
                       <Link className="block" href={`/products/${item.id}`}>
                         <h3 className="font-light font-outfit text-gray-900 text-sm transition-colors hover:text-gray-700 sm:text-base">
                           {item.name}
@@ -78,40 +85,34 @@ export default async function CartPage() {
                       </p>
                     </div>
 
-                    <div className="flex items-center space-x-3">
-                      <div className="flex items-center rounded-md border border-gray-300 bg-gray-50">
-                        <button
-                          className="p-2 text-gray-700 hover:bg-gray-100 disabled:cursor-not-allowed disabled:text-gray-400 disabled:opacity-50"
-                          disabled
-                          type="button"
-                        >
-                          <Minus className="h-3 w-3" />
-                        </button>
-                        <span className="min-w-[2rem] px-3 py-2 text-center font-light font-outfit text-gray-900 text-sm">
-                          {item.quantity}
-                        </span>
-                        <button
-                          className="p-2 text-gray-700 hover:bg-gray-100 disabled:cursor-not-allowed disabled:text-gray-400 disabled:opacity-50"
-                          disabled
-                          type="button"
-                        >
-                          <Plus className="h-3 w-3" />
-                        </button>
+                    <div className="col-span-2 mt-1 flex items-center justify-between sm:col-span-1 sm:mt-0 sm:ml-auto">
+                      <div className="flex items-center gap-2">
+                        <div className="flex items-center border border-gray-300 bg-gray-50">
+                          <button
+                            className="p-2 text-gray-700 hover:bg-gray-100 disabled:cursor-not-allowed disabled:text-gray-400 disabled:opacity-50"
+                            disabled
+                            type="button"
+                          >
+                            <Minus className="h-3 w-3" />
+                          </button>
+                          <span className="min-w-[2rem] px-3 py-2 text-center font-light font-outfit text-gray-900 text-sm">
+                            {item.quantity}
+                          </span>
+                          <button
+                            className="p-2 text-gray-700 hover:bg-gray-100 disabled:cursor-not-allowed disabled:text-gray-400 disabled:opacity-50"
+                            disabled
+                            type="button"
+                          >
+                            <Plus className="h-3 w-3" />
+                          </button>
+                        </div>
                       </div>
 
-                      <button
-                        className="rounded-md p-2 text-red-500 hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-50"
-                        disabled
-                        type="button"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </button>
-                    </div>
-
-                    <div className="text-right">
-                      <p className="font-light font-outfit text-gray-900 text-sm sm:text-base">
-                        QAR {(item.price * item.quantity).toFixed(2)}
-                      </p>
+                      <div className="text-right">
+                        <p className="font-light font-outfit text-gray-900 text-sm sm:text-base">
+                          QAR {(item.price * item.quantity).toFixed(2)}
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -119,7 +120,7 @@ export default async function CartPage() {
             </div>
 
             <div className="lg:col-span-1">
-              <div className="sticky top-6 border border-gray-200 bg-white p-6 shadow-sm">
+              <div className="border border-gray-200 bg-white p-6 shadow-sm lg:sticky lg:top-6">
                 <h2 className="mb-6 font-light font-playfair text-gray-900 text-lg sm:text-xl">
                   Order Summary
                 </h2>
