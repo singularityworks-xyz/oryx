@@ -26,3 +26,4 @@ function Slider({
 }
 
 export { Slider };
+

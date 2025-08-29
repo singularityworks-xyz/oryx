@@ -74,7 +74,7 @@ export default function AboutPage() {
                 Culinary
               </h3>
               <p className="mt-1 hidden max-w-xs font-light font-outfit text-gray-600 text-sm sm:block">
-                Built with chefs and hosts in mind.
+                Built with chefs and hosts in mind for every kitchen.
               </p>
             </div>
           </div>

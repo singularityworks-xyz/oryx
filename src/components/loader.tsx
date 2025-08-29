@@ -53,7 +53,7 @@ export function PageLoader() {
   const randomFact = funFacts[Math.floor(Math.random() * funFacts.length)];
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-gray-50">
       <div className="space-y-6 px-6 text-center sm:px-0">
         <Loader size="responsive" />
         <div className="space-y-2">
