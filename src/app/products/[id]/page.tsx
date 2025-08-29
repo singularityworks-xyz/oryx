@@ -30,6 +30,19 @@ export default async function ProductDetailPage({
       ? Math.round((discount / originalPrice) * PERCENTAGE_MULTIPLIER)
       : 0;
 
+  const similar = mockProducts
+    .filter((p) => p._id !== product._id)
+    .map((p) => ({
+      item: p,
+      overlap: p.categories.filter((c) => product.categories.includes(c))
+        .length,
+    }))
+    .filter(({ overlap }) => overlap > 0)
+    .sort((a, b) => b.overlap - a.overlap)
+    // biome-ignore lint/style/noMagicNumbers: TODO
+    .slice(0, 8)
+    .map(({ item }) => item);
+
   return (
     <div className="min-h-screen bg-white">
       <div className="bg-white shadow-sm">
@@ -202,6 +215,43 @@ export default async function ProductDetailPage({
           </div>
         </div>
       </section>
+
+      {similar.length > 0 && (
+        <section className="pb-12 sm:pb-16 md:pb-20 lg:pb-24">
+          <div className="mx-auto max-w-[1400px] px-4 sm:px-6 md:px-8 lg:px-10 xl:px-12">
+            <div className="mb-6 sm:mb-8">
+              <h2 className="font-light font-playfair text-2xl text-gray-900 sm:text-3xl">
+                Similar products
+              </h2>
+              <div className="mt-3 h-px w-16 bg-gray-300 sm:w-20" />
+            </div>
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
+              {similar.map((sp) => (
+                <Link
+                  className="group block border border-gray-200 bg-white p-2 transition-shadow hover:shadow-sm"
+                  href={`/products/${sp._id}`}
+                  key={sp._id}
+                >
+                  <div className="relative aspect-square w-full bg-gray-50">
+                    <Image
+                      alt={sp.name}
+                      className="object-cover"
+                      fill
+                      src={sp.images[0]}
+                    />
+                  </div>
+                  <p className="mt-2 truncate font-light font-outfit text-gray-900 text-sm">
+                    {sp.name}
+                  </p>
+                  <p className="font-light font-outfit text-gray-600 text-xs">
+                    QAR {sp.sellingPrice.toFixed(2)}
+                  </p>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
     </div>
   );
 }
