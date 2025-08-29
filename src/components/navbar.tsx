@@ -3,6 +3,7 @@
 import { Search, ShoppingCart } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import DesktopSearch from '@/components/search/desktop-search';
 import MobileSearch from '@/components/search/mobile-search';
@@ -16,6 +17,8 @@ export default function Navbar() {
   const mobileSearchRef = useRef<HTMLDivElement>(null);
   const desktopSearchRef = useRef<HTMLDivElement>(null);
   const { data: session } = useSession();
+  const pathname = usePathname();
+  const isAdmin = pathname?.startsWith('/admin');
   const cartCount = mockCartItems.reduce(
     (accumulator, item) => accumulator + item.quantity,
     0
@@ -147,7 +150,7 @@ export default function Navbar() {
                   </svg>
                 )}
               </button>
-              {isMenuOpen && (
+              {isMenuOpen && !isAdmin && (
                 <button
                   aria-label="Open search"
                   className="ml-2 p-2 text-gray-700 transition-colors hover:text-gray-900"
@@ -189,7 +192,7 @@ export default function Navbar() {
           </div>
         </div>
 
-        {!(isMenuOpen || isSearchOpen) && (
+        {!(isMenuOpen || isSearchOpen || isAdmin) && (
           <div className="border-gray-200 border-t bg-white px-4 py-3 md:hidden">
             <button
               className="flex w-full items-center space-x-3 border border-gray-300 bg-gray-50 px-4 py-3 text-gray-700 transition-colors hover:border-gray-400 hover:bg-gray-100"
@@ -212,7 +215,7 @@ export default function Navbar() {
         />
       </div>
 
-      {isSearchOpen && (
+      {isSearchOpen && !isAdmin && (
         <div className="md:hidden" ref={mobileSearchRef}>
           <MobileSearch autoFocus onClose={() => setIsSearchOpen(false)} />
         </div>

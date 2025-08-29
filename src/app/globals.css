@@ -148,3 +148,17 @@ html {
 *::-webkit-scrollbar-thumb:hover {
   background-color: oklch(0.145 0 0);
 }
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* Hide global footer on admin pages */
+body.is-admin footer { display: none; }
+/* Prevent window overscroll and scrolling when inside admin; use internal scroller instead */
+body.is-admin { overflow: hidden; height: 100svh; overscroll-behavior: none; }
