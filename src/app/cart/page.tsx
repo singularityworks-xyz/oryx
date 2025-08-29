@@ -3,11 +3,13 @@ import { headers } from 'next/headers';
 import Image from 'next/image';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
-import { mockCartItems } from '@/data/mock-data';
+import PastPurchases from '@/components/past-purchases';
+import { getTrendingProducts, mockCartItems } from '@/data/mock-data';
 import { auth } from '@/lib/auth';
 
 const FREE_SHIPPING_THRESHOLD = 200;
 const SHIPPING_COST = 25;
+const MAX_RECOMMENDED_PRODUCTS = 5;
 
 export default async function CartPage() {
   const session = await auth.api.getSession({
@@ -23,6 +25,7 @@ export default async function CartPage() {
   );
   const shipping = subtotal > FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_COST;
   const total = subtotal + shipping;
+  const recommended = getTrendingProducts();
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -49,141 +52,181 @@ export default async function CartPage() {
         </div>
 
         {mockCartItems.length > 0 ? (
-          <div className="grid grid-cols-1 gap-8 lg:grid-cols-3 lg:gap-12">
-            <div className="space-y-4 sm:space-y-6 lg:col-span-2">
-              {mockCartItems.map((item) => (
-                <div
-                  className="relative border border-gray-200 bg-white p-4 shadow-sm sm:p-6"
-                  key={item.id}
-                >
+          <div className="space-y-8">
+            <div className="lg:grid lg:grid-cols-3 lg:gap-12">
+              <div className="space-y-4 sm:space-y-6 lg:col-span-2">
+                {mockCartItems.map((item) => (
+                  <div
+                    className="relative border border-gray-200 bg-white p-4 shadow-sm sm:p-6"
+                    key={item.id}
+                  >
+                    <button
+                      className="absolute top-2 right-2 p-2 text-red-500 hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-50"
+                      disabled
+                      type="button"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                    <div className="grid grid-cols-[5rem_1fr] gap-3 sm:flex sm:items-center sm:gap-4">
+                      <div className="h-20 w-20 flex-shrink-0 sm:h-24 sm:w-24">
+                        <Image
+                          alt={item.name}
+                          className="h-full w-full object-cover"
+                          height={96}
+                          src={item.image}
+                          width={96}
+                        />
+                      </div>
+
+                      <div className="min-w-0">
+                        <Link className="block" href={`/products/${item.id}`}>
+                          <h3 className="font-light font-outfit text-gray-900 text-sm transition-colors hover:text-gray-700 sm:text-base">
+                            {item.name}
+                          </h3>
+                        </Link>
+                        <p className="mt-1 font-light font-outfit text-gray-500 text-xs sm:text-sm">
+                          QAR {item.price.toFixed(2)}
+                        </p>
+                      </div>
+
+                      <div className="col-span-2 mt-1 flex items-center justify-between gap-4 sm:col-span-1 sm:mt-0 sm:ml-auto sm:gap-6 lg:gap-10">
+                        <div className="flex items-center gap-2">
+                          <div className="flex items-center border border-gray-300 bg-gray-50">
+                            <button
+                              className="p-2 text-gray-700 hover:bg-gray-100 disabled:cursor-not-allowed disabled:text-gray-400 disabled:opacity-50"
+                              disabled
+                              type="button"
+                            >
+                              <Minus className="h-3 w-3" />
+                            </button>
+                            <span className="min-w-[2rem] px-3 py-2 text-center font-light font-outfit text-gray-900 text-sm">
+                              {item.quantity}
+                            </span>
+                            <button
+                              className="p-2 text-gray-700 hover:bg-gray-100 disabled:cursor-not-allowed disabled:text-gray-400 disabled:opacity-50"
+                              disabled
+                              type="button"
+                            >
+                              <Plus className="h-3 w-3" />
+                            </button>
+                          </div>
+                        </div>
+
+                        <div className="pl-4 text-right sm:pl-6 lg:pl-8">
+                          <p className="font-light font-outfit text-gray-900 text-sm sm:text-base">
+                            QAR {(item.price * item.quantity).toFixed(2)}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-8 lg:col-span-1 lg:mt-0">
+                <div className="border border-gray-200 bg-white p-6 shadow-sm lg:sticky lg:top-6">
+                  <h2 className="mb-6 font-light font-playfair text-gray-900 text-lg sm:text-xl">
+                    Order Summary
+                  </h2>
+
+                  <div className="mb-6 space-y-4">
+                    <div className="flex items-center justify-between font-light font-outfit text-sm">
+                      <span className="text-gray-600">
+                        Subtotal ({mockCartItems.length} items)
+                      </span>
+                      <span className="text-gray-900">
+                        QAR {subtotal.toFixed(2)}
+                      </span>
+                    </div>
+
+                    <div className="flex items-center justify-between font-light font-outfit text-sm">
+                      <span className="text-gray-600">Shipping</span>
+                      <span
+                        className={
+                          shipping === 0 ? 'text-green-600' : 'text-gray-900'
+                        }
+                      >
+                        {shipping === 0 ? 'FREE' : `QAR ${shipping.toFixed(2)}`}
+                      </span>
+                    </div>
+
+                    {shipping > 0 && (
+                      <p className="font-light font-outfit text-gray-500 text-xs">
+                        Add QAR{' '}
+                        {(FREE_SHIPPING_THRESHOLD - subtotal).toFixed(2)} more
+                        for free shipping
+                      </p>
+                    )}
+
+                    <div className="border-gray-200 border-t pt-4">
+                      <div className="flex items-center justify-between font-light font-outfit text-base sm:text-lg">
+                        <span className="text-gray-900">Total</span>
+                        <span className="font-medium text-gray-900">
+                          QAR {total.toFixed(2)}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
                   <button
-                    className="absolute top-2 right-2 p-2 text-red-500 hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-50"
+                    className="mb-4 w-full cursor-not-allowed bg-gray-400 px-6 py-4 font-light font-outfit text-base text-white sm:text-lg"
                     disabled
                     type="button"
                   >
-                    <Trash2 className="h-4 w-4" />
+                    Proceed to Checkout
                   </button>
-                  <div className="grid grid-cols-[5rem_1fr] gap-3 sm:flex sm:items-center sm:gap-4">
-                    <div className="h-20 w-20 flex-shrink-0 sm:h-24 sm:w-24">
-                      <Image
-                        alt={item.name}
-                        className="h-full w-full object-cover"
-                        height={96}
-                        src={item.image}
-                        width={96}
-                      />
-                    </div>
 
-                    <div className="min-w-0">
-                      <Link className="block" href={`/products/${item.id}`}>
-                        <h3 className="font-light font-outfit text-gray-900 text-sm transition-colors hover:text-gray-700 sm:text-base">
-                          {item.name}
-                        </h3>
-                      </Link>
-                      <p className="mt-1 font-light font-outfit text-gray-500 text-xs sm:text-sm">
-                        QAR {item.price.toFixed(2)}
-                      </p>
-                    </div>
+                  <p className="text-center font-light font-outfit text-gray-500 text-xs">
+                    Checkout functionality will be available in future updates
+                  </p>
 
-                    <div className="col-span-2 mt-1 flex items-center justify-between sm:col-span-1 sm:mt-0 sm:ml-auto">
-                      <div className="flex items-center gap-2">
-                        <div className="flex items-center border border-gray-300 bg-gray-50">
-                          <button
-                            className="p-2 text-gray-700 hover:bg-gray-100 disabled:cursor-not-allowed disabled:text-gray-400 disabled:opacity-50"
-                            disabled
-                            type="button"
-                          >
-                            <Minus className="h-3 w-3" />
-                          </button>
-                          <span className="min-w-[2rem] px-3 py-2 text-center font-light font-outfit text-gray-900 text-sm">
-                            {item.quantity}
-                          </span>
-                          <button
-                            className="p-2 text-gray-700 hover:bg-gray-100 disabled:cursor-not-allowed disabled:text-gray-400 disabled:opacity-50"
-                            disabled
-                            type="button"
-                          >
-                            <Plus className="h-3 w-3" />
-                          </button>
-                        </div>
-                      </div>
-
-                      <div className="text-right">
-                        <p className="font-light font-outfit text-gray-900 text-sm sm:text-base">
-                          QAR {(item.price * item.quantity).toFixed(2)}
-                        </p>
-                      </div>
-                    </div>
+                  <div className="mt-6 border-gray-200 border-t pt-4">
+                    <Link
+                      className="inline-flex items-center font-light font-outfit text-gray-600 text-sm hover:text-gray-900"
+                      href="/products"
+                    >
+                      <ShoppingBag className="mr-2 h-4 w-4" />
+                      Continue Shopping
+                    </Link>
                   </div>
                 </div>
-              ))}
+              </div>
             </div>
 
-            <div className="lg:col-span-1">
-              <div className="border border-gray-200 bg-white p-6 shadow-sm lg:sticky lg:top-6">
-                <h2 className="mb-6 font-light font-playfair text-gray-900 text-lg sm:text-xl">
-                  Order Summary
-                </h2>
+            <div className="mt-2">
+              <PastPurchases />
+            </div>
 
-                <div className="mb-6 space-y-4">
-                  <div className="flex items-center justify-between font-light font-outfit text-sm">
-                    <span className="text-gray-600">
-                      Subtotal ({mockCartItems.length} items)
-                    </span>
-                    <span className="text-gray-900">
-                      QAR {subtotal.toFixed(2)}
-                    </span>
-                  </div>
-
-                  <div className="flex items-center justify-between font-light font-outfit text-sm">
-                    <span className="text-gray-600">Shipping</span>
-                    <span
-                      className={
-                        shipping === 0 ? 'text-green-600' : 'text-gray-900'
-                      }
+            <div className="mt-2">
+              <h2 className="mb-3 font-light font-playfair text-gray-900 text-lg sm:text-xl">
+                Recommended for you
+              </h2>
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+                {recommended
+                  .slice(0, MAX_RECOMMENDED_PRODUCTS)
+                  .map((product) => (
+                    <Link
+                      className="group block border border-gray-200 bg-white p-2 transition-shadow hover:shadow-sm"
+                      href={`/products/${product._id}`}
+                      key={product._id}
                     >
-                      {shipping === 0 ? 'FREE' : `QAR ${shipping.toFixed(2)}`}
-                    </span>
-                  </div>
-
-                  {shipping > 0 && (
-                    <p className="font-light font-outfit text-gray-500 text-xs">
-                      Add QAR {(FREE_SHIPPING_THRESHOLD - subtotal).toFixed(2)}{' '}
-                      more for free shipping
-                    </p>
-                  )}
-
-                  <div className="border-gray-200 border-t pt-4">
-                    <div className="flex items-center justify-between font-light font-outfit text-base sm:text-lg">
-                      <span className="text-gray-900">Total</span>
-                      <span className="font-medium text-gray-900">
-                        QAR {total.toFixed(2)}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                <button
-                  className="mb-4 w-full cursor-not-allowed bg-gray-400 px-6 py-4 font-light font-outfit text-base text-white sm:text-lg"
-                  disabled
-                  type="button"
-                >
-                  Proceed to Checkout
-                </button>
-
-                <p className="text-center font-light font-outfit text-gray-500 text-xs">
-                  Checkout functionality will be available in future updates
-                </p>
-
-                <div className="mt-6 border-gray-200 border-t pt-4">
-                  <Link
-                    className="inline-flex items-center font-light font-outfit text-gray-600 text-sm hover:text-gray-900"
-                    href="/products"
-                  >
-                    <ShoppingBag className="mr-2 h-4 w-4" />
-                    Continue Shopping
-                  </Link>
-                </div>
+                      <div className="overflow-hidden bg-gray-50">
+                        <Image
+                          alt={product.name}
+                          className="h-32 w-full object-cover transition-transform duration-300 group-hover:scale-105 sm:h-36 md:h-40"
+                          height={160}
+                          src={product.images[0]}
+                          width={160}
+                        />
+                      </div>
+                      <p className="mt-2 truncate font-light font-outfit text-gray-900 text-sm">
+                        {product.name}
+                      </p>
+                      <p className="font-light font-outfit text-gray-600 text-xs">
+                        QAR {product.sellingPrice.toFixed(2)}
+                      </p>
+                    </Link>
+                  ))}
               </div>
             </div>
           </div>
