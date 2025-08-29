@@ -8,7 +8,7 @@ import { useEffect, useRef, useState } from 'react';
 import DesktopSearch from '@/components/search/desktop-search';
 import MobileSearch from '@/components/search/mobile-search';
 import { mockCartItems } from '@/data/mock-data';
-import { useSession } from '@/lib/auth-client';
+import { useSessionQuery } from '@/lib/session-query';
 import UserButton from './user-button';
 
 export default function Navbar() {
@@ -16,7 +16,7 @@ export default function Navbar() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const mobileSearchRef = useRef<HTMLDivElement>(null);
   const desktopSearchRef = useRef<HTMLDivElement>(null);
-  const { data: session } = useSession();
+  const { data: session } = useSessionQuery();
   const pathname = usePathname();
   const isAdmin = pathname?.startsWith('/admin');
   const cartCount = mockCartItems.reduce(

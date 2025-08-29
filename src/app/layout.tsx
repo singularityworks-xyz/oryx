@@ -1,9 +1,13 @@
 import type { Metadata } from 'next';
+import { headers } from 'next/headers';
 import { Geist, Geist_Mono, Outfit, Playfair_Display } from 'next/font/google';
 import Script from 'next/script';
 import './globals.css';
-import Footer from '@/components/footer';
+import FooterSwitcher from '@/components/footer-switcher';
 import Navbar from '@/components/navbar';
+import { QueryProvider } from '@/lib/query-client';
+import SessionHydrator from '@/components/session-hydrator';
+import { auth } from '@/lib/auth';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -30,11 +34,12 @@ export const metadata: Metadata = {
   description: 'Qatar’s trusted partner in premium hotel supplies',
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await auth.api.getSession({ headers: await headers() });
   return (
     <html lang="en">
       <body
@@ -45,11 +50,14 @@ export default function RootLayout({
           src="https://tracking.zephyyrr.in/script.js"
           strategy="afterInteractive"
         />
-        <div className="flex min-h-screen flex-col">
-          <Navbar />
-          <main className="flex-1">{children}</main>
-          <Footer />
-        </div>
+        <QueryProvider>
+          <SessionHydrator session={session} />
+          <div className="flex min-h-screen flex-col">
+            <Navbar />
+            <main className="flex-1">{children}</main>
+            <FooterSwitcher />
+          </div>
+        </QueryProvider>
       </body>
     </html>
   );

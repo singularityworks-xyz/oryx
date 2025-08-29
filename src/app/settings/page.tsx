@@ -1,5 +1,7 @@
-import { headers } from 'next/headers';
-import { redirect } from 'next/navigation';
+'use client';
+
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import EditPhotoDialog from '@/components/profile/edit-photo-dialog';
 import ChangeEmailDialog from '@/components/settings/change-email-dialog';
 import ChangePasswordDialog from '@/components/settings/change-password-dialog';
@@ -9,15 +11,26 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
-import { auth } from '@/lib/auth';
+import { useSessionQuery } from '@/lib/session-query';
 
-export default async function SettingsPage() {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+export default function SettingsPage() {
+  const { data: session, isPending } = useSessionQuery();
+  const router = useRouter();
 
-  if (!session) {
-    redirect('/auth/login');
+  useEffect(() => {
+    if (!(isPending || session)) {
+      router.replace('/auth/login');
+    }
+  }, [isPending, session, router]);
+
+  if (isPending || !session) {
+    return (
+      <div className="min-h-screen bg-white">
+        <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
+          <div className="h-10 w-32 animate-pulse bg-gray-200" />
+        </div>
+      </div>
+    );
   }
 
   const initials = (session.user.name || 'User')

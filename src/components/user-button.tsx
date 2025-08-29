@@ -13,10 +13,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { signOut, useSession } from '@/lib/auth-client';
+import { signOut } from '@/lib/auth-client';
+import { useSessionQuery } from '@/lib/session-query';
 
 export default function UserButton() {
-  const { data: session, isPending } = useSession();
+  const { data: session, isPending } = useSessionQuery();
   const router = useRouter();
 
   const handleSignOut = async () => {

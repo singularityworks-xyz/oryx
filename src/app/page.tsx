@@ -3,12 +3,17 @@
 import { ArrowRight } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import ProductCard from '@/components/product-card';
 import { mockProducts } from '@/data/mock-data';
 
 export default function Home() {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     const video = videoRef.current;
@@ -30,6 +35,18 @@ export default function Home() {
       playVideo();
     }
   }, []);
+
+  if (!mounted) {
+    return (
+      <div className="bg-white">
+        <section className="relative overflow-hidden bg-white">
+          <div className="mx-auto max-w-[1400px] px-4 py-12">
+            <div className="h-8 w-28 animate-pulse bg-gray-200" />
+          </div>
+        </section>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-white">

@@ -1,23 +1,36 @@
+'use client';
+
 import { ArrowLeft, Minus, Plus, ShoppingBag, Trash2 } from 'lucide-react';
-import { headers } from 'next/headers';
 import Image from 'next/image';
 import Link from 'next/link';
-import { redirect } from 'next/navigation';
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import PastPurchases from '@/components/past-purchases';
 import { getTrendingProducts, mockCartItems } from '@/data/mock-data';
-import { auth } from '@/lib/auth';
+import { useSessionQuery } from '@/lib/session-query';
 
 const FREE_SHIPPING_THRESHOLD = 200;
 const SHIPPING_COST = 25;
 const MAX_RECOMMENDED_PRODUCTS = 5;
 
-export default async function CartPage() {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+export default function CartPage() {
+  const { data: session, isPending } = useSessionQuery();
+  const router = useRouter();
 
-  if (!session) {
-    redirect('/auth/login');
+  useEffect(() => {
+    if (!(isPending || session)) {
+      router.replace('/auth/login');
+    }
+  }, [isPending, session, router]);
+
+  if (isPending || !session) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <div className="mx-auto max-w-[1400px] px-4 py-12 sm:px-6 md:px-8 lg:px-10 xl:px-12">
+          <div className="h-6 w-24 animate-pulse bg-gray-200" />
+        </div>
+      </div>
+    );
   }
   const subtotal = mockCartItems.reduce(
     (accumulator, item) => accumulator + item.price * item.quantity,

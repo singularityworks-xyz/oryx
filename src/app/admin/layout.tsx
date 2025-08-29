@@ -5,6 +5,8 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import type React from 'react';
 import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { useSessionQuery } from '@/lib/session-query';
 import {
   Menubar,
   MenubarContent,
@@ -65,10 +67,26 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const { data: session, isPending } = useSessionQuery();
+  const router = useRouter();
   useEffect(() => {
     document.body.classList.add('is-admin');
     return () => document.body.classList.remove('is-admin');
   }, []);
+
+  useEffect(() => {
+    if (!(isPending || session)) {
+      router.replace('/auth/login');
+    }
+  }, [isPending, session, router]);
+
+  if (isPending || !session) {
+    return (
+      <div className="p-6">
+        <div className="h-6 w-24 animate-pulse bg-gray-200" />
+      </div>
+    );
+  }
 
   return (
     <SidebarProvider>
