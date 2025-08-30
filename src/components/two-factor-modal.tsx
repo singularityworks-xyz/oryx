@@ -13,7 +13,11 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSlot,
+} from '@/components/ui/input-otp';
 import { Label } from '@/components/ui/label';
 import { authClient } from '@/lib/auth-client';
 
@@ -24,6 +28,7 @@ type TwoFactorModalProps = {
 };
 
 const TOTP_LENGTH: number = 6;
+const BACKUP_CODE_LENGTH: number = 10;
 
 export default function TwoFactorModal({
   isOpen,
@@ -33,7 +38,7 @@ export default function TwoFactorModal({
   const [code, setCode] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
-  const [method, setMethod] = useState<'totp' | 'otp'>('totp');
+  const [method, setMethod] = useState<'totp' | 'backup'>('totp');
   const router = useRouter();
 
   const handleVerify = async (e: React.FormEvent) => {
@@ -48,7 +53,7 @@ export default function TwoFactorModal({
               code,
               trustDevice: true,
             })
-          : await authClient.twoFactor.verifyOtp({
+          : await authClient.twoFactor.verifyBackupCode({
               code,
               trustDevice: true,
             });
@@ -67,24 +72,10 @@ export default function TwoFactorModal({
     }
   };
 
-  const handleSendOTP = async () => {
-    setIsLoading(true);
+  const handleUseBackupCodes = () => {
+    setMethod('backup');
+    setCode('');
     setError('');
-
-    try {
-      const result = await authClient.twoFactor.sendOtp();
-
-      if (result.error) {
-        setError(result.error.message || 'Failed to send OTP');
-      } else {
-        setMethod('otp');
-        setError('');
-      }
-    } catch {
-      setError('Failed to send OTP. Please try again.');
-    } finally {
-      setIsLoading(false);
-    }
   };
 
   const handleClose = () => {
@@ -119,25 +110,40 @@ export default function TwoFactorModal({
 
         <form className="space-y-4" onSubmit={handleVerify}>
           <div>
-            <Label className="font-light font-outfit text-sm" htmlFor="code">
-              Verification Code
+            <Label className="justify-center font-light font-outfit text-sm">
+              {method === 'backup' ? 'Backup Code' : 'Verification Code'}
             </Label>
-            <Input
-              className="mt-1 text-center font-mono text-lg tracking-widest"
-              id="code"
-              maxLength={6}
-              onChange={(e) => setCode(e.target.value)}
-              placeholder="000000"
-              required
-              type="text"
-              value={code}
-            />
+            <div className="mt-2 flex justify-center">
+              <InputOTP
+                maxLength={
+                  method === 'backup' ? BACKUP_CODE_LENGTH : TOTP_LENGTH
+                }
+                onChange={(value) => setCode(value)}
+                value={code}
+              >
+                <InputOTPGroup>
+                  {Array.from({
+                    length:
+                      method === 'backup' ? BACKUP_CODE_LENGTH : TOTP_LENGTH,
+                  }).map((_, index) => (
+                    <InputOTPSlot
+                      index={index}
+                      key={`otp-${method}-slot-${index}-${Math.random()}`}
+                    />
+                  ))}
+                </InputOTPGroup>
+              </InputOTP>
+            </div>
           </div>
 
-          <div className="flex gap-2">
+          <div className="flex justify-center gap-3">
             <Button
-              className="flex-1 rounded-none"
-              disabled={isLoading || code.length !== TOTP_LENGTH}
+              className="rounded-none bg-gray-900 px-8 font-light font-outfit text-white hover:bg-gray-800"
+              disabled={
+                isLoading ||
+                code.length !==
+                  (method === 'backup' ? BACKUP_CODE_LENGTH : TOTP_LENGTH)
+              }
               type="submit"
             >
               {isLoading ? (
@@ -150,7 +156,7 @@ export default function TwoFactorModal({
               )}
             </Button>
             <Button
-              className="rounded-none"
+              className="rounded-none border border-gray-300 bg-white px-8 font-light font-outfit text-gray-700 hover:bg-gray-50"
               disabled={isLoading}
               onClick={handleClose}
               type="button"
@@ -166,27 +172,33 @@ export default function TwoFactorModal({
             <Button
               className="font-light font-outfit text-sm"
               disabled={isLoading}
-              onClick={handleSendOTP}
+              onClick={handleUseBackupCodes}
               variant="link"
             >
-              {isLoading ? (
-                <>
-                  <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />
-                  Sending...
-                </>
-              ) : (
-                <>
-                  <Smartphone className="mr-2 h-4 w-4" />
-                  Send code to email instead
-                </>
-              )}
+              Use backup code instead
+            </Button>
+          </div>
+        )}
+
+        {method === 'backup' && (
+          <div className="text-center">
+            <Button
+              className="font-light font-outfit text-sm"
+              disabled={isLoading}
+              onClick={() => setMethod('totp')}
+              variant="link"
+            >
+              <Smartphone className="mr-2 h-4 w-4" />
+              Use authenticator app instead
             </Button>
           </div>
         )}
 
         <DialogFooter className="text-center text-gray-500 text-sm">
           <p className="font-light font-outfit">
-            Can't access your codes? Contact support for help.
+            {method === 'backup'
+              ? 'Backup codes can only be used once. Make sure to generate new ones after login.'
+              : "Can't access your authenticator app? Use a backup code instead."}
           </p>
         </DialogFooter>
       </DialogContent>

@@ -4,13 +4,13 @@ import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import { nextCookies } from 'better-auth/next-js';
 import { twoFactor } from 'better-auth/plugins';
 import { db } from './db';
-import { sendOTP } from './email';
 import { env } from './env';
 import { logger } from './logger';
 // biome-ignore lint/performance/noNamespaceImport: Required for Drizzle schema
 import * as schema from './schema';
 
 export const auth = betterAuth({
+  telemetry: { enabled: false },
   appName: 'Oryx',
   baseURL: process.env.BETTER_AUTH_URL || process.env.NEXT_PUBLIC_APP_URL,
   rateLimit: {
@@ -63,17 +63,6 @@ export const auth = betterAuth({
   plugins: [
     nextCookies(),
     twoFactor({
-      otpOptions: {
-        async sendOTP({ user, otp }) {
-          try {
-            await sendOTP(user.email, otp);
-            console.log(`✅ OTP sent successfully to ${user.email}`);
-          } catch (error) {
-            console.error(`❌ Failed to send OTP to ${user.email}:`, error);
-            throw error;
-          }
-        },
-      },
       // Skip 2FA verification on enable for development ease
       skipVerificationOnEnable: process.env.NODE_ENV === 'development',
     }),
