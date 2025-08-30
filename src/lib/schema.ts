@@ -8,6 +8,9 @@ export const user = pgTable('user', {
     .$defaultFn(() => false)
     .notNull(),
   image: text('image'),
+  twoFactorEnabled: boolean('two_factor_enabled')
+    .$defaultFn(() => false)
+    .notNull(),
   createdAt: timestamp('created_at')
     .$defaultFn(() => /* @__PURE__ */ new Date())
     .notNull(),
@@ -60,6 +63,21 @@ export const verification = pgTable('verification', {
   ),
 });
 
+export const twoFactor = pgTable('two_factor', {
+  id: text('id').primaryKey(),
+  userId: text('user_id')
+    .notNull()
+    .references(() => user.id, { onDelete: 'cascade' }),
+  secret: text('secret'),
+  backupCodes: text('backup_codes'),
+  createdAt: timestamp('created_at')
+    .$defaultFn(() => /* @__PURE__ */ new Date())
+    .notNull(),
+  updatedAt: timestamp('updated_at')
+    .$defaultFn(() => /* @__PURE__ */ new Date())
+    .notNull(),
+});
+
 export type User = typeof user.$inferSelect;
 export type NewUser = typeof user.$inferInsert;
 export type Session = typeof session.$inferSelect;
@@ -68,3 +86,5 @@ export type Account = typeof account.$inferSelect;
 export type NewAccount = typeof account.$inferInsert;
 export type Verification = typeof verification.$inferSelect;
 export type NewVerification = typeof verification.$inferInsert;
+export type TwoFactor = typeof twoFactor.$inferSelect;
+export type NewTwoFactor = typeof twoFactor.$inferInsert;

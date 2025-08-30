@@ -1,35 +1,43 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
-import PastPurchases from '@/components/past-purchases';
+import { useEffect, useState } from 'react';
 import EditPhotoDialog from '@/components/profile/edit-photo-dialog';
+import ChangeEmailDialog from '@/components/settings/change-email-dialog';
+import ChangePasswordDialog from '@/components/settings/change-password-dialog';
+import ConnectedAccounts from '@/components/settings/connected-accounts';
+import DeleteAccountDialog from '@/components/settings/delete-account-dialog';
+import LoginActivity from '@/components/settings/login-activity';
+import TwoFactorSettings from '@/components/settings/two-factor-settings';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
+import { Switch } from '@/components/ui/switch';
+import type { SessionResponse } from '@/lib/session-query';
 import { useSessionQuery } from '@/lib/session-query';
 
-export default function ProfilePage() {
-  const { data: session, isPending } = useSessionQuery();
-  const router = useRouter();
+type SettingsPageClientProps = {
+  initialSession?: SessionResponse['session'];
+};
+
+export default function SettingsPageClient({
+  initialSession,
+}: SettingsPageClientProps) {
+  const { data: session } = useSessionQuery(initialSession);
+  const [twoFactorEnabled, setTwoFactorEnabled] = useState(false);
 
   useEffect(() => {
-    if (!(isPending || session)) {
-      router.replace('/auth/login');
+    if (session?.user.twoFactorEnabled != null) {
+      setTwoFactorEnabled(session.user.twoFactorEnabled);
+    } else {
+      setTwoFactorEnabled(false);
     }
-  }, [isPending, session, router]);
+  }, [session?.user.twoFactorEnabled]);
 
-  if (isPending || !session) {
-    return (
-      <div className="min-h-screen bg-white">
-        <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
-          <div className="h-10 w-32 animate-pulse bg-gray-200" />
-        </div>
-      </div>
-    );
+  // With initial session data from server, we should always have session data
+  // If for some reason we don't, it means there's an authentication issue
+  if (!session) {
+    // This shouldn't happen due to server-side redirect
+    return null;
   }
 
   const initials = (session.user.name || 'User')
@@ -44,7 +52,7 @@ export default function ProfilePage() {
       <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
         <div className="mb-8">
           <h1 className="font-light font-playfair text-3xl text-gray-900 tracking-wide">
-            Profile
+            Settings
           </h1>
           <div className="mx-auto mt-4 h-px w-16 bg-gray-300" />
         </div>
@@ -57,7 +65,7 @@ export default function ProfilePage() {
                   Account
                 </CardTitle>
                 <p className="font-light font-outfit text-gray-600 text-sm">
-                  Manage your personal details
+                  Manage your identity and profile
                 </p>
               </CardHeader>
               <CardContent>
@@ -100,21 +108,21 @@ export default function ProfilePage() {
                         className="w-full rounded-none bg-gray-900 px-4 py-2 font-light font-outfit text-white hover:bg-gray-800"
                         type="button"
                       >
-                        Edit Profile
+                        Change Password
                       </Button>
                       <Button
                         className="w-full rounded-none border border-gray-300 bg-white px-4 py-2 font-light font-outfit text-gray-900 hover:bg-gray-50"
                         type="button"
                         variant="outline"
                       >
-                        View Orders
+                        Manage Notifications
                       </Button>
                       <Button
                         className="w-full rounded-none border border-gray-300 bg-white px-4 py-2 font-light font-outfit text-gray-900 hover:bg-gray-50"
                         type="button"
                         variant="outline"
                       >
-                        Manage Addresses
+                        Connected Apps
                       </Button>
                     </div>
                   </CardContent>
@@ -128,8 +136,7 @@ export default function ProfilePage() {
                   </CardHeader>
                   <CardContent>
                     <p className="mb-3 font-light font-outfit text-gray-600 text-sm">
-                      Have questions about your orders or account? We’re here to
-                      help.
+                      Need help with your account or settings?
                     </p>
                     <Button
                       className="w-full rounded-none bg-gray-900 px-4 py-2 font-light font-outfit text-white hover:bg-gray-800"
@@ -147,130 +154,93 @@ export default function ProfilePage() {
             <Card className="rounded-none border border-gray-200 shadow-sm">
               <CardHeader>
                 <CardTitle className="font-light font-outfit text-gray-900 text-xl">
-                  Basic Information
+                  Account Settings
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                  <div>
-                    <Label className="block font-light font-outfit text-gray-700 text-sm">
-                      Full name
-                    </Label>
-                    <Input
-                      className="mt-2 rounded-none border-gray-300 focus:border-gray-900 focus:ring-0"
-                      defaultValue={session.user.name || ''}
-                      disabled
-                      placeholder="Your name"
-                    />
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="font-light font-outfit text-gray-900">
+                        Email
+                      </h3>
+                      <p className="font-light font-outfit text-gray-600 text-sm">
+                        {session.user.email}
+                      </p>
+                    </div>
+                    <ChangeEmailDialog />
                   </div>
-                  <div>
-                    <Label className="block font-light font-outfit text-gray-700 text-sm">
-                      Email address
-                    </Label>
-                    <Input
-                      className="mt-2 rounded-none border-gray-300 focus:border-gray-900 focus:ring-0"
-                      defaultValue={session.user.email || ''}
-                      disabled
-                      placeholder="your@email.com"
-                      type="email"
-                    />
+
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="font-light font-outfit text-gray-900">
+                        Password
+                      </h3>
+                      <p className="font-light font-outfit text-gray-600 text-sm">
+                        Last updated recently
+                      </p>
+                    </div>
+                    <ChangePasswordDialog />
+                  </div>
+
+                  <TwoFactorSettings
+                    isEnabled={twoFactorEnabled}
+                    onStatusChange={setTwoFactorEnabled}
+                  />
+                </div>
+              </CardContent>
+            </Card>
+
+            <ConnectedAccounts />
+
+            <Card className="rounded-none border border-gray-200 shadow-sm">
+              <CardHeader>
+                <CardTitle className="font-light font-outfit text-gray-900 text-xl">
+                  Preferences
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="font-light font-outfit text-gray-900">
+                        Notifications
+                      </h3>
+                      <p className="font-light font-outfit text-gray-600 text-sm">
+                        Receive updates about new products and offers
+                      </p>
+                    </div>
+                    <Switch defaultChecked />
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="font-light font-outfit text-gray-900">
+                        Marketing
+                      </h3>
+                      <p className="font-light font-outfit text-gray-600 text-sm">
+                        Receive promotional emails and special offers
+                      </p>
+                    </div>
+                    <Switch />
                   </div>
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="rounded-none border border-gray-200 shadow-sm">
-              <CardHeader>
-                <CardTitle className="font-light font-outfit text-gray-900 text-xl">
-                  Shipping Address
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                  <div className="sm:col-span-2">
-                    <Label className="block font-light font-outfit text-gray-700 text-sm">
-                      Address line 1
-                    </Label>
-                    <Input
-                      className="mt-2 rounded-none border-gray-300 focus:border-gray-900 focus:ring-0"
-                      placeholder="Street address, P.O. box"
-                    />
-                  </div>
-                  <div className="sm:col-span-2">
-                    <Label className="block font-light font-outfit text-gray-700 text-sm">
-                      Address line 2
-                    </Label>
-                    <Input
-                      className="mt-2 rounded-none border-gray-300 focus:border-gray-900 focus:ring-0"
-                      placeholder="Apartment, suite, unit"
-                    />
-                  </div>
-                  <div>
-                    <Label className="block font-light font-outfit text-gray-700 text-sm">
-                      City
-                    </Label>
-                    <Input
-                      className="mt-2 rounded-none border-gray-300 focus:border-gray-900 focus:ring-0"
-                      placeholder="City"
-                    />
-                  </div>
-                  <div>
-                    <Label className="block font-light font-outfit text-gray-700 text-sm">
-                      State/Province
-                    </Label>
-                    <Input
-                      className="mt-2 rounded-none border-gray-300 focus:border-gray-900 focus:ring-0"
-                      placeholder="State or province"
-                    />
-                  </div>
-                  <div>
-                    <Label className="block font-light font-outfit text-gray-700 text-sm">
-                      Postal code
-                    </Label>
-                    <Input
-                      className="mt-2 rounded-none border-gray-300 focus:border-gray-900 focus:ring-0"
-                      placeholder="Postal code"
-                    />
-                  </div>
-                  <div>
-                    <Label className="block font-light font-outfit text-gray-700 text-sm">
-                      Country
-                    </Label>
-                    <Input
-                      className="mt-2 rounded-none border-gray-300 focus:border-gray-900 focus:ring-0"
-                      placeholder="Country"
-                    />
-                  </div>
-                  <div className="sm:col-span-2">
-                    <Label className="block font-light font-outfit text-gray-700 text-sm">
-                      Delivery instructions
-                    </Label>
-                    <Textarea
-                      className="mt-2 rounded-none border-gray-300 focus:border-gray-900 focus:ring-0"
-                      placeholder="Add any helpful delivery notes..."
-                      rows={4}
-                    />
-                  </div>
-                  <div className="sm:col-span-2">
-                    <Button
-                      className="rounded-none bg-gray-900 px-5 py-2 font-light font-outfit text-white hover:bg-gray-800"
-                      type="button"
-                    >
-                      Save Address
-                    </Button>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+            <LoginActivity />
 
-            <Card className="rounded-none border border-gray-200 shadow-sm">
+            <Card className="rounded-none border border-red-200 bg-red-50 shadow-sm">
               <CardHeader>
-                <CardTitle className="font-light font-outfit text-gray-900 text-xl">
-                  Past Purchases
+                <CardTitle className="font-light font-outfit text-red-900 text-xl">
+                  Danger Zone
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <PastPurchases />
+                <p className="mb-4 font-light font-outfit text-red-700 text-sm">
+                  Irreversible and destructive actions.
+                </p>
+                <DeleteAccountDialog />
               </CardContent>
             </Card>
           </div>

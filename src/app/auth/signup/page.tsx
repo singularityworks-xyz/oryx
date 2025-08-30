@@ -1,13 +1,16 @@
 'use client';
 
+import { useQueryClient } from '@tanstack/react-query';
 import { Eye, EyeOff, Loader2Icon, Lock, Mail, User } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { toast } from 'sonner';
 import { signIn, signUp } from '@/lib/auth-client';
 
 const MIN_PASSWORD_LENGTH = 6;
-const REDIRECT_DELAY = 2000;
+const REDIRECT_DELAY = 1000;
 
 export default function SignupPage() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -21,6 +24,8 @@ export default function SignupPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
+  const router = useRouter();
+  const queryClient = useQueryClient();
 
   const getButtonText = () => {
     if (isLoading) {
@@ -39,22 +44,53 @@ export default function SignupPage() {
     });
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setError('');
-    setSuccess(false);
-
+  const validateForm = () => {
     if (formData.password !== formData.confirmPassword) {
       setError('Passwords do not match');
-      setIsLoading(false);
-      return;
+      return false;
     }
 
     if (formData.password.length < MIN_PASSWORD_LENGTH) {
       setError(
         `Password must be at least ${MIN_PASSWORD_LENGTH} characters long`
       );
+      return false;
+    }
+
+    return true;
+  };
+
+  const handleAutoLoginFailure = () => {
+    toast.warning('Account created but auto-login failed', {
+      description: 'Please sign in manually.',
+    });
+    setTimeout(() => {
+      router.push('/auth/login');
+    }, REDIRECT_DELAY);
+  };
+
+  const handleAutoLoginSuccess = async () => {
+    await queryClient.invalidateQueries({ queryKey: ['session'] });
+    await queryClient.refetchQueries({ queryKey: ['session'] });
+
+    window.dispatchEvent(new CustomEvent('session-cleared'));
+
+    toast.success('Welcome to Oryx!', {
+      description: "Your account has been created and you're now signed in.",
+    });
+
+    setTimeout(() => {
+      router.push('/');
+    }, REDIRECT_DELAY);
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setError('');
+    setSuccess(false);
+
+    if (!validateForm()) {
       setIsLoading(false);
       return;
     }
@@ -68,14 +104,42 @@ export default function SignupPage() {
 
       if (result.error) {
         setError(result.error.message ?? 'Sign up failed');
+        toast.error('Account creation failed', {
+          description:
+            result.error.message ??
+            'Please check your information and try again.',
+        });
       } else {
         setSuccess(true);
-        setTimeout(() => {
-          window.location.href = '/auth/login';
-        }, REDIRECT_DELAY);
+        toast.success('Account created successfully!', {
+          description: 'Signing you in automatically...',
+        });
+
+        // Automatically sign in the user after successful account creation
+        try {
+          const signInResult = await signIn.email({
+            email: formData.email,
+            password: formData.password,
+          });
+
+          if (signInResult.error) {
+            handleAutoLoginFailure();
+            return;
+          }
+
+          await handleAutoLoginSuccess();
+        } catch (signInError) {
+          console.error('Auto sign-in error:', signInError);
+          handleAutoLoginFailure();
+        }
       }
-    } catch (_err) {
+    } catch (err) {
+      console.error('Sign up error:', err);
       setError('An error occurred during sign up');
+      toast.error('Connection error', {
+        description:
+          'Unable to connect to server. Please check your internet connection.',
+      });
     } finally {
       setIsLoading(false);
     }
@@ -96,10 +160,32 @@ export default function SignupPage() {
 
       if (socialError) {
         setError(socialError.message ?? 'Google sign in failed');
+        toast.error('Google sign in failed', {
+          description:
+            socialError.message ?? 'Please try again or use email/password.',
+        });
         return;
       }
-    } catch {
+
+      await queryClient.invalidateQueries({ queryKey: ['session'] });
+      await queryClient.refetchQueries({ queryKey: ['session'] });
+
+      window.dispatchEvent(new CustomEvent('session-cleared'));
+
+      toast.success('Account created with Google!', {
+        description: "Welcome to Oryx! You're now signed in.",
+      });
+
+      // Redirect with a shorter delay to show the success message
+      setTimeout(() => {
+        router.push('/');
+      }, REDIRECT_DELAY);
+    } catch (err) {
+      console.error('Google sign in error:', err);
       setError('Google sign in failed');
+      toast.error('Connection error', {
+        description: 'Unable to connect to Google. Please try again.',
+      });
     } finally {
       setIsLoading(false);
     }
@@ -125,7 +211,7 @@ export default function SignupPage() {
             {success && (
               <div className="mt-4 rounded-lg bg-green-50 p-4 text-green-600">
                 <p className="font-light font-outfit text-sm">
-                  Account created successfully! Redirecting to login...
+                  Account created successfully! Redirecting to home...
                 </p>
               </div>
             )}

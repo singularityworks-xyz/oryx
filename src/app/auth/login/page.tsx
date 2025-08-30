@@ -1,10 +1,16 @@
 'use client';
 
+import { useQueryClient } from '@tanstack/react-query';
 import { Eye, EyeOff, Loader2Icon, Lock, Mail } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { toast } from 'sonner';
+import { useTwoFactor } from '@/contexts/two-factor-context';
 import { signIn } from '@/lib/auth-client';
+
+const REDIRECT_DELAY = 800;
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -12,6 +18,9 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const router = useRouter();
+  const queryClient = useQueryClient();
+  const { showTwoFactorModal } = useTwoFactor();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,11 +35,43 @@ export default function LoginPage() {
 
       if (result.error) {
         setError(result.error?.message ?? 'Sign in failed');
+        toast.error('Sign in failed', {
+          description:
+            result.error?.message ??
+            'Please check your credentials and try again.',
+        });
+        // biome-ignore lint/suspicious/noExplicitAny: Could be any
+      } else if ((result as any).data?.twoFactorRedirect) {
+        toast.info('Two-factor authentication required', {
+          description: 'Please complete the verification process.',
+        });
+        showTwoFactorModal(async () => {
+          await queryClient.invalidateQueries({ queryKey: ['session'] });
+          await queryClient.refetchQueries({ queryKey: ['session'] });
+          toast.success('Successfully signed in!', {
+            description: 'Welcome back to Oryx.',
+          });
+          router.push('/');
+        });
       } else {
-        window.location.href = '/';
+        await queryClient.invalidateQueries({ queryKey: ['session'] });
+        await queryClient.refetchQueries({ queryKey: ['session'] });
+
+        toast.success('Successfully signed in!', {
+          description: 'Welcome back to Oryx.',
+        });
+
+        setTimeout(() => {
+          router.push('/');
+        }, REDIRECT_DELAY);
       }
-    } catch {
+    } catch (err) {
+      console.error('Sign in error:', err);
       setError('An error occurred during sign in');
+      toast.error('Connection error', {
+        description:
+          'Unable to connect to server. Please check your internet connection.',
+      });
     } finally {
       setIsLoading(false);
     }
@@ -51,10 +92,29 @@ export default function LoginPage() {
 
       if (socialError) {
         setError(socialError.message ?? 'Google sign in failed');
+        toast.error('Google sign in failed', {
+          description:
+            socialError.message ?? 'Please try again or use email/password.',
+        });
         return;
       }
-    } catch {
+
+      await queryClient.invalidateQueries({ queryKey: ['session'] });
+      await queryClient.refetchQueries({ queryKey: ['session'] });
+
+      toast.success('Successfully signed in with Google!', {
+        description: 'Welcome back to Oryx.',
+      });
+
+      setTimeout(() => {
+        router.push('/');
+      }, REDIRECT_DELAY);
+    } catch (err) {
+      console.error('Google sign in error:', err);
       setError('Google sign in failed');
+      toast.error('Connection error', {
+        description: 'Unable to connect to Google. Please try again.',
+      });
     } finally {
       setIsLoading(false);
     }

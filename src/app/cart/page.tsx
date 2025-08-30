@@ -3,8 +3,8 @@
 import { ArrowLeft, Minus, Plus, ShoppingBag, Trash2 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 import PastPurchases from '@/components/past-purchases';
 import { getTrendingProducts, mockCartItems } from '@/data/mock-data';
 import { useSessionQuery } from '@/lib/session-query';

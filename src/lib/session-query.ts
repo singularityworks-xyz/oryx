@@ -9,6 +9,7 @@ export type SessionResponse = {
       name: string | null;
       email: string;
       image?: string | null;
+      twoFactorEnabled?: boolean | null;
     };
   };
 };
@@ -22,10 +23,11 @@ async function fetchSession(): Promise<SessionResponse['session']> {
   return data.session ?? null;
 }
 
-export function useSessionQuery() {
+export function useSessionQuery(initialData?: SessionResponse['session']) {
   return useQuery({
     queryKey: ['session'],
     queryFn: fetchSession,
-    placeholderData: (prev) => prev,
+    initialData,
+    placeholderData: initialData ?? null,
   });
 }

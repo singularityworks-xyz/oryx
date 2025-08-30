@@ -1,6 +1,7 @@
+import { twoFactorClient } from 'better-auth/client/plugins';
 import { createAuthClient } from 'better-auth/react';
-import { queryClient } from './query-client';
 import { env } from './env';
+import { queryClient } from './query-client';
 
 export const authClient = createAuthClient({
   baseURL:
@@ -8,6 +9,15 @@ export const authClient = createAuthClient({
     (typeof window !== 'undefined'
       ? window.location.origin
       : 'http://localhost:3000'),
+  plugins: [
+    twoFactorClient({
+      onTwoFactorRedirect() {
+        // Instead of redirecting, we'll handle this in the UI
+        // The signIn function will return twoFactorRedirect: true
+        // and the UI can show a modal
+      },
+    }),
+  ],
 });
 
 export const { signIn, signUp, signOut: rawSignOut, useSession } = authClient;

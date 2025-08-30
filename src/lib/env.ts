@@ -1,6 +1,28 @@
 import { createEnv } from '@t3-oss/env-core';
-import { z } from 'zod';
+import type { ZodObject, ZodRawShape } from 'zod';
+import { ZodError, z } from 'zod';
 import { logger } from './logger';
+
+export default function tryParseEnv<T extends ZodRawShape>(
+  EnvSchema: ZodObject<T>,
+  buildEnv: Record<string, string | undefined> = process.env
+) {
+  try {
+    EnvSchema.parse(buildEnv);
+  } catch (error) {
+    if (error instanceof ZodError) {
+      let message = 'Missing required values in .env:\n';
+      for (const issue of error.issues) {
+        const firstSegment = issue.path[0];
+        message += `${String(firstSegment)}\n`;
+      }
+      const e = new Error(message);
+      e.stack = '';
+      throw e;
+    }
+    console.error(error);
+  }
+}
 
 const MIN_SECRET_LENGTH = 32;
 
@@ -8,12 +30,18 @@ export const env = createEnv({
   clientPrefix: 'NEXT_PUBLIC_',
 
   server: {
-    DATABASE_URL: z.url({ message: 'DATABASE_URL must be a valid URL' }),
+    DATABASE_URL: z
+      .string()
+      .min(1, 'DATABASE_URL is required')
+      .default('file:./dev.db'),
     BETTER_AUTH_SECRET: z
       .string()
       .min(
         MIN_SECRET_LENGTH,
         `BETTER_AUTH_SECRET must be at least ${MIN_SECRET_LENGTH} characters`
+      )
+      .default(
+        'your-super-secret-key-at-least-32-characters-long-for-development-only-change-this-in-production'
       ),
     NODE_ENV: z
       .enum(['development', 'production', 'test'])
@@ -40,6 +68,13 @@ export const env = createEnv({
     LOG_SERVICE_API_KEY: z.string().optional(),
     GOOGLE_CLIENT_ID: z.string().optional(),
     GOOGLE_CLIENT_SECRET: z.string().optional(),
+    ZOHO_EMAIL: z
+      .string({ message: 'ZOHO_EMAIL must be a valid email address' })
+      .optional(),
+    ZOHO_APP_PASSWORD: z
+      .string()
+      .min(1, 'ZOHO_APP_PASSWORD is required')
+      .optional(),
   },
 
   client: {
@@ -67,6 +102,8 @@ export const env = createEnv({
     LOG_SERVICE_API_KEY: process.env.LOG_SERVICE_API_KEY,
     GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
     GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
+    ZOHO_EMAIL: process.env.ZOHO_EMAIL,
+    ZOHO_APP_PASSWORD: process.env.ZOHO_APP_PASSWORD,
     NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
     NEXT_PUBLIC_GOOGLE_AUTH_ENABLED:
       process.env.NEXT_PUBLIC_GOOGLE_AUTH_ENABLED,

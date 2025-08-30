@@ -2,11 +2,9 @@
 
 import { FileTextIcon, HomeIcon, ShoppingCartIcon } from 'lucide-react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import type React from 'react';
 import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { useSessionQuery } from '@/lib/session-query';
 import {
   Menubar,
   MenubarContent,
@@ -34,6 +32,7 @@ import {
   SidebarTrigger,
 } from '@/components/ui/sidebar';
 import { Toaster } from '@/components/ui/sonner';
+import { useSessionQuery } from '@/lib/session-query';
 
 export function NavItem({
   href,

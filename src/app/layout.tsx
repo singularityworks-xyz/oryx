@@ -1,13 +1,15 @@
 import type { Metadata } from 'next';
-import { headers } from 'next/headers';
 import { Geist, Geist_Mono, Outfit, Playfair_Display } from 'next/font/google';
+import { headers } from 'next/headers';
 import Script from 'next/script';
 import './globals.css';
 import FooterSwitcher from '@/components/footer-switcher';
 import Navbar from '@/components/navbar';
-import { QueryProvider } from '@/lib/query-client';
 import SessionHydrator from '@/components/session-hydrator';
+import { Toaster } from '@/components/ui/sonner';
+import { TwoFactorProvider } from '@/contexts/two-factor-context';
 import { auth } from '@/lib/auth';
+import { QueryProvider } from '@/lib/query-client';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -52,11 +54,14 @@ export default async function RootLayout({
         />
         <QueryProvider>
           <SessionHydrator session={session} />
-          <div className="flex min-h-screen flex-col">
-            <Navbar />
-            <main className="flex-1">{children}</main>
-            <FooterSwitcher />
-          </div>
+          <TwoFactorProvider>
+            <div className="flex min-h-screen flex-col">
+              <Navbar />
+              <main className="flex-1">{children}</main>
+              <FooterSwitcher />
+            </div>
+          </TwoFactorProvider>
+          <Toaster />
         </QueryProvider>
       </body>
     </html>

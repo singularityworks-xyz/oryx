@@ -8,7 +8,9 @@ import * as schema from './schema';
 const REGEX_URL = /\/\/.*@/;
 
 const client = postgres(env.DATABASE_URL, {
-  max: 1, // Maximum number of connections
+  max: 10, // Maximum number of connections
+  idle_timeout: 20, // Close idle connections after 20 seconds
+  connect_timeout: 10, // Connection timeout in seconds
   // biome-ignore lint/suspicious/noEmptyBlockStatements: hmmm..
   onnotice: () => {},
 });

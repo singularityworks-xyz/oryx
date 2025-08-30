@@ -15,6 +15,13 @@
       "when": 1756231355424,
       "tag": "0001_brave_shriek",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1756471272009,
+      "tag": "0002_keen_cannonball",
+      "breakpoints": true
     }
   ]
 }

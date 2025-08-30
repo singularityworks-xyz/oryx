@@ -14,6 +14,7 @@ import UserButton from './user-button';
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [, setForceUpdate] = useState(0);
   const mobileSearchRef = useRef<HTMLDivElement>(null);
   const desktopSearchRef = useRef<HTMLDivElement>(null);
   const { data: session } = useSessionQuery();
@@ -23,6 +24,17 @@ export default function Navbar() {
     (accumulator, item) => accumulator + item.quantity,
     0
   );
+
+  // Listen for session cleared events to force navbar re-render
+  useEffect(() => {
+    const handleSessionCleared = () => {
+      setForceUpdate((prev) => prev + 1);
+    };
+
+    window.addEventListener('session-cleared', handleSessionCleared);
+    return () =>
+      window.removeEventListener('session-cleared', handleSessionCleared);
+  }, []);
 
   useEffect(() => {
     function onDocClick(e: MouseEvent) {

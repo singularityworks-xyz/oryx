@@ -3,6 +3,7 @@
 import { LogOut, Settings, UserCircle } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
@@ -17,8 +18,20 @@ import { signOut } from '@/lib/auth-client';
 import { useSessionQuery } from '@/lib/session-query';
 
 export default function UserButton() {
+  const [, setForceUpdate] = useState(0);
   const { data: session, isPending } = useSessionQuery();
   const router = useRouter();
+
+  // Listen for session cleared events to force component re-render
+  useEffect(() => {
+    const handleSessionCleared = () => {
+      setForceUpdate((prev) => prev + 1);
+    };
+
+    window.addEventListener('session-cleared', handleSessionCleared);
+    return () =>
+      window.removeEventListener('session-cleared', handleSessionCleared);
+  }, []);
 
   const handleSignOut = async () => {
     await signOut({
